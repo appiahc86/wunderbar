@@ -14,7 +14,7 @@
 
         <div class="row justify-content-end">
           <div class="collapse navbar-collapse" id="navbarText">
-            <span class="pi pi-bars bars" style="cursor: pointer"></span>
+            <span class="pi pi-bars bars"></span>
           </div>
         </div>
 
@@ -29,6 +29,7 @@
   font-size: 1.5em;
   cursor: pointer;
   padding: 7px;
+  z-index: 100;
 }
 .bars:hover {
   background: rgba(208, 208, 208, 0.46);

@@ -540,15 +540,16 @@ window.addEventListener('scroll', function() {
                             <p class="item-price">3,65 €</p>
                           </div>
                         </div>
-                        <div class="col-2" style="display: flex; justify-content: center; align-items: center">
-                          <p>
-                            <img src="/img/coke.avif" alt="coke" class="img-fluid">
-                          </p>
-                        </div>
-                        <div class="col-1">
+
+                        <div class="col-3">
                           <h1 class="float-end ">
                             <Button icon="pi pi-plus" severity="secondary" rounded outlined class="mt-2" />
                           </h1>
+                          <div style="justify-content: center; align-items: center">
+                            <p>
+                              <img src="/img/coke.webp" alt="coke" class="img-fluid">
+                            </p>
+                          </div>
                         </div>
                       </div>
                     </div>
