@@ -1,4 +1,4 @@
-# lottery
+# Pizza Wunderbar
 
 ## Project setup
 ```
