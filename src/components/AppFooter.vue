@@ -3,8 +3,8 @@
 </script>
 
 <template>
-<div class="pt-5">
-<footer class="py-5">
+<div class="pt-4">
+<footer class="py-4">
   <div class="text-center">
     <a href="" class="d-inline-block mx-3 text-decoration-none text-secondary">Datenschutzerklärung</a>
     <a href="" class="d-inline-block mx-3 text-decoration-none text-secondary">Verwendung von Cookies</a>

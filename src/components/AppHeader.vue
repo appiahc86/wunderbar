@@ -14,7 +14,7 @@
 
         <div class="row justify-content-end">
           <div class="collapse navbar-collapse" id="navbarText">
-            <span class="pi pi-bars bars"></span>
+            <span class="pi pi-bars bars" style="cursor: pointer"></span>
           </div>
         </div>
 

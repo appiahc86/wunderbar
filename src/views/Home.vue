@@ -166,10 +166,7 @@ window.addEventListener('scroll', function() {
                   </div>
 
 
-                  <div class="py-3 cat-bg" style="background-image: url('/img/Pizza.avif')">
-
-                    <!--              <img src="/img/pizza.avif" alt="pizza" class="img-fluid">-->
-                  </div>
+                  <div class="py-3 cat-bg" style="background-image: url('/img/pizza.webp')"></div>
 
                   <h4 id="Pizza" class="fw-bold">Pizza</h4>
                   <!-- Menu Item -->
@@ -291,7 +288,7 @@ window.addEventListener('scroll', function() {
                   </div>
 
 
-                  <div class="py-3 cat-bg" style="background-image: url('/img/Calzone.avif')">
+                  <div class="py-3 cat-bg" style="background-image: url('/img/calzone.webp')">
 
                     <!--              <img src="/img/calzone.avif" alt="pizza" class="img-fluid">-->
                   </div>
@@ -396,8 +393,7 @@ window.addEventListener('scroll', function() {
                   </div>
 
 
-                  <div class="py-3 cat-bg" style="background-image: url('/img/Kindergerichte.avif')">
-                    <!--              <img src="/img/Kindergerichte.avif" alt="pizza" class="img-fluid">-->
+                  <div class="py-3 cat-bg" style="background-image: url('/img/kindergerichte.webp')">
                   </div>
 
                   <h4 id="Kindergerichte" class="fw-bold">Kindergerichte</h4>
@@ -499,7 +495,7 @@ window.addEventListener('scroll', function() {
                     </div>
                   </div>
 
-                  <div class="py-3 cat-bg" style="background-image: url('/img/Alkoholfreie.avif')">
+                  <div class="py-3 cat-bg" style="background-image: url('/img/alkoholfreie.webp')">
                   </div>
 
                   <h4 class="fw-bold" id="Alkoholfreie">Alkoholfreie Getränke</h4>
@@ -672,7 +668,7 @@ window.addEventListener('scroll', function() {
   justify-content: center;
   flex-direction: column;
   color: #fff;
-  background-image: url("/public/img/271_italian_pizza_107.avif");
+  background-image: url("/public/img/271_italian_pizza_107.webp");
 }
 @media screen and (min-width: 800px) {
   .banner{
