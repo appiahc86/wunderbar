@@ -1,7 +1,6 @@
 <script setup>
-import { ref } from "vue";
-import AppHeader from "@/components/AppHeader";
-import AppFooter from "@/components/AppFooter";
+import AppHeader from "@/components/layouts/AppHeader.vue";
+import AppFooter from "@/components/layouts/AppFooter.vue";
 
 </script>
 
@@ -10,7 +9,6 @@ import AppFooter from "@/components/AppFooter";
 <AppHeader />
 
   <router-view></router-view>
-
 
 <AppFooter />
 

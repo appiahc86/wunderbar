@@ -1,20 +1,10 @@
 <script setup>
 import Button from "primevue/button";
+import Upper from "@/components/layouts/Upper.vue";
 import {onMounted} from "vue";
+import FloatingCart from "@/components/FloatingCart.vue";
 
-onMounted(()=> {
-
-var navbar = document.getElementById('navbar-example2');
-var bounding = navbar.getBoundingClientRect();
-var sticky = navbar.offsetTop;
-window.addEventListener('scroll', function() {
-
-  if (window.pageYOffset > sticky) {
-    navbar.classList.add("fixed-top");
-  } else if (bounding.top > -1) {
-    navbar.classList.remove("fixed-top");
-  }
-});
+onMounted(() => {
 
 
 })
@@ -24,90 +14,101 @@ window.addEventListener('scroll', function() {
 <div class="">
 <div class="container-fluid d-flex overflow-hidden" role="main">
   <div class="row">
-    <div class="col-lg-9 g-0 left-section" style="width: calc(100% - 350px);">
+
+    <div class="col-lg-3 d-none d-flex d-lg-block card shadow">
+
+      <aside class="" style="max-height: 200px;">
+        <h4 class="text-center fw-bold" style="margin-top: 40px;">Menü</h4>   <!-- Menu -->
+        <div style="max-height: 50px !important; font-size: 0.9em;">
+
+          <ul class="list-group text-center fw-bold">
+            <li class="list-group-item menu-list" aria-current="true">Angebot</li>
+            <li class="list-group-item menu-list">Pizza</li>
+            <li class="list-group-item menu-list">Calzone</li>
+            <li class="list-group-item menu-list">Pizzabrötchen</li>
+            <li class="list-group-item menu-list">Kinder Pizza</li>
+            <li class="list-group-item menu-list">Alkoholfreie Getränke</li>
+          </ul>
+
+        </div>
+
+      </aside>
+
+
+
+    </div><!--Col-lg-3-->
+
+
+    <div class="col-lg-9 g-0">
 
             <section>
 
               <div class="">
                 <!--          Menu Item-->
-                <div class="card shadow mb-4 d-flex">
-                  <div class="banner">  </div>
-                  <div class="px-2 px-lg-5">
-                    <h4 translate="no" class="mt-3">Pizza Wunderbar</h4>
-                    <p>
-                      <span class="pi pi-clock"></span>&nbsp;
-                      <small>Lieferung ab 14:00</small>
 
-                      <span class="d-none d-md-inline">
-                   <span class=""> &#10038;</span>
-                <span class=""> &#127949; <small>3.00 €&nbsp;</small></span>
-                <span class="pi pi-shopping-bag"></span>
-                <span class=""><small>&nbsp;Min. 30.00 €</small></span>
-                </span>
+                <Upper />
 
-                    </p>
-                    <p>
-                      <small>
-                        Bei diesem Restaurant kannst du Stempel sammeln. Stelle beim Bestellabschluss
-                        bitte sicher, dass du dich für unseren Newsletter angemeldet hast,
-                        um deine Stempel per E-Mail zu erhalten.
-                      </small>
-
-                    </p>
-
-                    <!--         scrollspy     -->
-                    <nav id="navbar-example2" class="mb-2 w-100" style="background: white">
-                      <ul class="nav nav-pills">
-                        <li class="nav-item">
-                          <a class="nav-link category text-decoration-none text-secondary"
-                             href="#Beliebt">Beliebt</a>
-                        </li>
-                        <li class="nav-item">
-                          <a class="nav-link category text-decoration-none text-secondary"
-                             href="#Pizza">Pizza </a>
-                        </li>
-                        <li class="nav-item">
-                          <a class="nav-link category text-decoration-none text-secondary"
-                             href="#Calzone">Calzone </a>
-                        </li>
-                        <li class="nav-item">
-                          <a class="nav-link category text-decoration-none text-secondary"
-                             href="#Kindergerichte">Kindergerichte </a>
-                        </li>
-
-                        <li class="nav-item">
-                          <a class="nav-link category text-decoration-none text-secondary"
-                             href="#Alkoholfreie">Alkoholfreie Getränke </a>
-                        </li>
-
-
-                      </ul>
-                    </nav>
-
-
-                  </div>
-                </div>
-
-
-                <div data-bs-spy="scroll" data-bs-target="#navbar-example2"
-                     data-bs-root-margin="0px 0px -40%" data-bs-smooth-scroll="true"
+                <div data-bs-root-margin="0px 0px -40%"
                      class="scrollspy-example p-3 rounded-2 content mx-lg-5" tabindex="0">
                   <h4 class="fw-bold" id="Beliebt">Beliebt</h4>
                   <!-- Menu Item -->
+                  
+                  
+                  
+                  
+<!--                  <div class="card mb-3 menu-card">-->
+<!--                    <div class="container-fluid">-->
+
+<!--                      <div class="row g-0">-->
+<!--                        <div class="col-4" style="width: 60px; height:60px;">-->
+<!--                          <img src="/img/classic.jpg" class="img-fluid rounded-3 mt-3" alt="image">-->
+<!--                        </div>-->
+<!--                        <div class="col-8">-->
+<!--                          <div class="card-body">-->
+<!--                            <h3 class="item-name mt-">-->
+<!--                              Pizza Salami [Ø 32cm] erdsfsd&nbsp;-->
+<!--                            </h3>-->
+<!--                            <div class="" style="">-->
+<!--                              <p class="card-text" style="font-size: 0.9em">This is a wider card with a little bit longer.</p>-->
+<!--                              <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>-->
+<!--                            </div>-->
+
+<!--                          </div>-->
+<!--                        </div>-->
+<!--                      </div>-->
+
+
+
+
+<!--                      <div class="row">-->
+<!--                        <div class="col mt-4">-->
+<!--                          $ 20.99-->
+<!--                        </div>-->
+<!--                        <div class="col">-->
+<!--                          <h1 class="float-end ">-->
+<!--                            <Button icon="pi pi-plus" severity="secondary" rounded outlined class="mt-2" />-->
+<!--                          </h1>-->
+<!--                        </div>-->
+<!--                      </div>-->
+<!--                      -->
+<!--                    </div>-->
+<!--                  </div>-->
                   <div class="card mb-3 menu-card">
                     <div class="container-fluid">
                       <div class="row">
                         <div class="col-10">
                           <div class="">
                             <h3 class="item-name mt-3">
-                              Pizza Hawai &nbsp;
+                              Pizza Tuna
                               <span class="pi pi-exclamation-circle"></span>
                             </h3>
                             <div class="menu-item-body">
-                              mit Schinken und Ananas<br>
-                              Wahl aus: Ø 28cm, Ø 32cm oder Ø 40cm.
+                              mit Thunfisch und Zwiebeln <br>
                             </div>
-                            <p class="item-price">9,90 €</p>
+                            <div class="menu-item-body">
+                              Wahl aus: Ø 28cm, Ø 32cm oder Ø 40cm. <br>
+                            </div>
+                            <p class="item-price">10,50 €</p>
                           </div>
                         </div>
                         <div class="col-2">
@@ -118,6 +119,10 @@ window.addEventListener('scroll', function() {
                       </div>
                     </div>
                   </div>
+                  
+                  
+                  
+                  
                   <div class="card mb-3 menu-card">
                     <div class="container-fluid">
                       <div class="row">
@@ -166,7 +171,7 @@ window.addEventListener('scroll', function() {
                   </div>
 
 
-                  <div class="py-3 cat-bg" style="background-image: url('/img/pizza.webp')"></div>
+                  <div class="py-3 menu-bg" style="background-image: url('/img/pizza.webp')"></div>
 
                   <h4 id="Pizza" class="fw-bold">Pizza</h4>
                   <!-- Menu Item -->
@@ -288,7 +293,7 @@ window.addEventListener('scroll', function() {
                   </div>
 
 
-                  <div class="py-3 cat-bg" style="background-image: url('/img/calzone.webp')">
+                  <div class="py-3 menu-bg" style="background-image: url('/img/calzone.webp')">
 
                     <!--              <img src="/img/calzone.avif" alt="pizza" class="img-fluid">-->
                   </div>
@@ -393,7 +398,7 @@ window.addEventListener('scroll', function() {
                   </div>
 
 
-                  <div class="py-3 cat-bg" style="background-image: url('/img/kindergerichte.webp')">
+                  <div class="py-3 menu-bg" style="background-image: url('/img/Kindergerichte.webp')">
                   </div>
 
                   <h4 id="Kindergerichte" class="fw-bold">Kindergerichte</h4>
@@ -481,7 +486,6 @@ window.addEventListener('scroll', function() {
                             </h3>
                             <div class="menu-item-body">
                               mit Salami, Tomatensauce und Käse <br>
-
                             </div>
                             <p class="item-price">5,40 €</p>
                           </div>
@@ -495,7 +499,7 @@ window.addEventListener('scroll', function() {
                     </div>
                   </div>
 
-                  <div class="py-3 cat-bg" style="background-image: url('/img/alkoholfreie.webp')">
+                  <div class="py-3 cat-bg" style="background-image: url('/img/Alkoholfreie.webp')">
                   </div>
 
                   <h4 class="fw-bold" id="Alkoholfreie">Alkoholfreie Getränke</h4>
@@ -633,84 +637,36 @@ window.addEventListener('scroll', function() {
             </section>
 
 
-    </div>
 
-    <div class="col-lg-3 d-none d-lg-block card shadow" style="width: 344px !important;">
-
-        <aside class="">
-          <h4 class="text-center fw-bold" style="margin-top: 70px;">Warenkorb</h4>
-        <h1 class="text-center mt-5"><span class="pi pi-shopping-bag" style="font-size: 0.7em;"></span></h1>
-          <h4 class="mt-3 text-center fw-bold">Fülle deinen Warenkorb</h4>
-          <p class="text-center">
-            Füge einige leckere Gerichte aus der Speisekarte hinzu und bestelle dein Essen.
-          </p>
-        </aside>
 
     </div>
 
+  </div><!--Row-->
 
-  </div>
+</div><!--Container-->
 
-</div>
   <br><br><br><br>
+
+  <FloatingCart />
 </div>
 </template>
 
 
 <style scoped>
-.banner{
-  height: 12em;
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center;
-  background-color: grey;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  color: #fff;
-  background-image: url("/public/img/271_italian_pizza_107.webp");
-}
-@media screen and (min-width: 800px) {
-  .banner{
-    height: 20em;
-  }
-}
 
-.left-section {
-  flex: 1 1 auto;
-  overflow-y: scroll;
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE and Edge */
-}
-.left-section::-webkit-scrollbar {
-  display: none; /* Chrome, Safari, and Opera */
-}
 aside {
-  flex: 0 0 auto;
-  position: fixed;
-  top: 0;
+  height: inherit !important;
 }
 
-.fixed-top {
-  padding: 10px 5px 10px 30px;
+.menu-list {
+  cursor: pointer;
 }
-@media screen and (max-width: 700px) {
-  .fixed-top {
-    padding-left: 5px;
-  }
-}
-
-.category.active {
-  background: rgba(0, 0, 0, 0.77);
-  color: white !important;
-  padding: 5px !important;
-  border-radius: 40px;
+.menu-list:hover {
+  background: saddlebrown;
+  color: white;
 }
 
-
-
-.cat-bg{
+.menu-bg{
   height: 6em;
   background-repeat: no-repeat;
   background-size: cover;
@@ -720,7 +676,7 @@ aside {
 }
 
 @media screen and (min-width: 800px) {
-  .cat-bg {
+  .menu-bg {
     height: 10em;
   }
 }
