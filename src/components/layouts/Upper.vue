@@ -35,12 +35,12 @@ onMounted(() => {
 
 <!--    Menu   -->
     <div class="d-inline d-lg-none px-2 mb-2">
-      <small class="fw-bold"><mark>Angebot</mark></small>&nbsp;
-      <small><mark>Pizza</mark></small>&nbsp;
-      <small class="fw-bold"><mark>Calzone</mark></small>&nbsp;
-      <small><mark>Pizzabrötchen</mark></small>&nbsp;
-      <small class="fw-bold"><mark>Kinder Pizza</mark></small>&nbsp;
-      <small><mark>Alkoholfreie Getränke</mark></small>&nbsp;
+      <span class="badge text-bg-secondary">Angebot</span>&nbsp;
+      <span class="badge text-bg-secondary">Pizza</span>&nbsp;
+      <span class="badge text-bg-secondary">Calzone</span>&nbsp;
+      <span class="badge text-bg-secondary">Pizzabrötchen</span>&nbsp;
+      <span class="badge text-bg-secondary">AngebotAngebot</span>&nbsp;
+      <span class="badge text-bg-secondary">Alkoholfreie Getränke</span>&nbsp;
     </div>
 
   </div>
