@@ -10,8 +10,8 @@ onMounted(() => {
   <div class="card shadow mb-4 d-flex">
     <div class="banner" style="background-image: url('/img/271_italian_pizza_107.webp')">  </div>
     <div class="px-2 px-lg-5">
-      <h4 translate="no" class="mt-3">Pizza Wunderbar</h4>
-      <p>
+
+      <p class="mt-3">
         <span class="pi pi-clock"></span>&nbsp;
         <small>Lieferung ab 14:00</small>
 
@@ -35,12 +35,12 @@ onMounted(() => {
 
 <!--    Menu   -->
     <div class="d-inline d-lg-none px-2 mb-2">
-      <span class="badge text-bg-secondary">Angebot</span>&nbsp;
-      <span class="badge text-bg-secondary">Pizza</span>&nbsp;
-      <span class="badge text-bg-secondary">Calzone</span>&nbsp;
-      <span class="badge text-bg-secondary">Pizzabrötchen</span>&nbsp;
-      <span class="badge text-bg-secondary">AngebotAngebot</span>&nbsp;
-      <span class="badge text-bg-secondary">Alkoholfreie Getränke</span>&nbsp;
+      <span class="badge text-bg-secondary" style="cursor: pointer;">Angebot</span>&nbsp;
+      <span class="badge text-bg-secondary" style="cursor: pointer;">Pizza</span>&nbsp;
+      <span class="badge text-bg-secondary" style="cursor: pointer;">Calzone</span>&nbsp;
+      <span class="badge text-bg-secondary" style="cursor: pointer;">Pizzabrötchen</span>&nbsp;
+      <span class="badge text-bg-secondary" style="cursor: pointer;">AngebotAngebot</span>&nbsp;
+      <span class="badge text-bg-secondary" style="cursor: pointer;">Alkoholfreie Getränke</span>&nbsp;
     </div>
 
   </div>
