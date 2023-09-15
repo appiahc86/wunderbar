@@ -1,5 +1,6 @@
 <script setup>
 import {onMounted} from "vue";
+import Menu from "@/components/menu/Menu.vue";
 
 onMounted(() => {
 
@@ -34,14 +35,8 @@ onMounted(() => {
     </div>
 
 <!--    Menu   -->
-    <div class="d-inline d-lg-none px-2 mb-2">
-      <span class="badge text-bg-secondary" style="cursor: pointer;">Angebot</span>&nbsp;
-      <span class="badge text-bg-secondary" style="cursor: pointer;">Pizza</span>&nbsp;
-      <span class="badge text-bg-secondary" style="cursor: pointer;">Calzone</span>&nbsp;
-      <span class="badge text-bg-secondary" style="cursor: pointer;">Pizzabrötchen</span>&nbsp;
-      <span class="badge text-bg-secondary" style="cursor: pointer;">AngebotAngebot</span>&nbsp;
-      <span class="badge text-bg-secondary" style="cursor: pointer;">Alkoholfreie Getränke</span>&nbsp;
-    </div>
+    <div class="d-lg-none mb-2"><Menu /></div>
+
 
   </div>
 </template>

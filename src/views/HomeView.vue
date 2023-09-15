@@ -1,10 +1,14 @@
 <script setup>
-import {onMounted} from "vue";
+import {onMounted, ref} from "vue";
 import FloatingCart from "@/components/FloatingCart.vue";
-import MenuItems from "@/components/layouts/menu/MenuItems.vue";
+import MenuItems from "@/components/menuItems/MenuItems.vue";
+import Menu from "@/components/menu/Menu.vue";
+import { useHomeStore } from "@/store/home";
+import {useCartStore} from "@/store/cart";
+
+const cartStore = useCartStore();
 
 onMounted(() => {
-
 
 })
 </script>
@@ -14,26 +18,9 @@ onMounted(() => {
 <div class="container-fluid d-flex overflow-hidden" role="main">
   <div class="row">
 
-    <div class="col-lg-3 d-none d-flex d-lg-block card shadow">
+    <div class="col-lg-3 d-none d-lg-block d-flex d-lg-block card shadow">
 
-      <aside class="" style="max-height: 200px;">
-        <h4 class="text-center fw-bold" style="margin-top: 40px;">Menü</h4>   <!-- Menu -->
-        <div style="max-height: 50px !important; font-size: 0.9em;">
-
-          <ul class="list-group text-center fw-bold">
-            <li class="list-group-item menu-list" aria-current="true">Angebot</li>
-            <li class="list-group-item menu-list">Pizza</li>
-            <li class="list-group-item menu-list">Calzone</li>
-            <li class="list-group-item menu-list">Pizzabrötchen</li>
-            <li class="list-group-item menu-list">Kinder Pizza</li>
-            <li class="list-group-item menu-list">Alkoholfreie Getränke</li>
-          </ul>
-
-        </div>
-
-      </aside>
-
-
+      <Menu />
 
     </div><!--Col-lg-3-->
 
@@ -50,25 +37,12 @@ onMounted(() => {
 
   <br><br><br><br>
 
-  <FloatingCart />
+  <FloatingCart v-if="cartStore.getLength"/>
 </div>
 </template>
 
 
 <style scoped>
-
-aside {
-  height: inherit !important;
-}
-
-.menu-list {
-  cursor: pointer;
-}
-.menu-list:hover {
-  background: saddlebrown;
-  color: white;
-}
-
 
 .menu-bg{
   height: 6em;

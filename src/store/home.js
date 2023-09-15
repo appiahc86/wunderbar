@@ -1,4 +1,5 @@
-import { defineStore } from 'pinia'
+import { defineStore } from 'pinia';
+import router from "../router/index.js";
 import { parse, stringify,  } from 'zipson';
 
 // You can name the return value of `defineStore()` anything you want,
@@ -10,55 +11,35 @@ import { parse, stringify,  } from 'zipson';
 export const useHomeStore = defineStore('homeStore', {
     state: () => {
         return {
-            registrationPhoneNumber: null,
-            pass: "",
-            network: "",
-            verificationCode: null,
-            user: {},
-            token: "",
+            user: {}
          }
     },
 
     getters: {
-
+        isLoggedIn() {
+            return (this.user.token && this.user.email);
+        }
     },
 
     actions: {
 
-      //Set registration data
-     setRegistrationData (num, password, network, vCode){
-        this.registrationPhoneNumber = num;
-        this.pass = password;
-        this.verificationCode = vCode;
-        this.network = network;
+      //Set User data
+     setUser (payload){
+        this.user = payload;
     },
 
-        //Clear registration data
-     clearRegistrationData(){
-        this.registrationPhoneNumber = null;
-        this.pass = '';
-        this.verificationCode = null;
-        this.network = '';
-    },
-
-        //Set Token
-     setToken(payload){ this.token = payload },
-
-    //set User
-    setUser(payload){ this.user = payload },
-
-       //Clear Token
-     clearToken(){ this.token = "" },
-
-    //Clear User
-    clearUser(){ this.user = {} }
+    //logout
+    logout(){
+         this.user = {};
+        router.push({name: "home"})
+     }
 
     },
 
     persist: {
-       key: '_loda',
+       key: '_session',
             storage: sessionStorage,
-            paths: ['registrationPhoneNumber', 'pass', 'verificationCode', 'token', 'user', 'network'],
+            paths: ['user'],
             serializer: {
                 deserialize: parse,
                 serialize: stringify

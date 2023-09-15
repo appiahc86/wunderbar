@@ -1,11 +1,11 @@
 import router from "./router/index.js";
 import axios from "axios";
 import {useHomeStore} from "./store/home.js";
+import {useComponentStore} from "@/store/componentStore";
 
 
 axios.defaults.baseURL = "http://localhost:3000";
-// axios.defaults.baseURL = "http://192.168.1.101:3000";
-// axios.defaults.baseURL = "https://server.nantylotto.com";
+// axios.defaults.baseURL = "http://192.168.43.122:3000";
 axios.defaults.headers.post['Content-Type'] = 'application/json; charset=utf-8';
 axios.defaults.headers.patch['Content-Type'] = 'application/json; charset=utf-8';
 axios.defaults.headers.delete['Content-Type'] = 'application/json; charset=utf-8';
@@ -19,11 +19,12 @@ axios.interceptors.response.use(function (response) {
 }, function (e) {
     // Any status codes that falls outside the range of 2xx cause this function to trigger
     // Do something with response error
-    const store = useHomeStore()
+    const store = useHomeStore();
+    const componentStore = useComponentStore();
     if (e.response && e.response.status === 401){
-        store.clearToken();
-        store.clearUser();
-        router.push({name: "register-login"})
+        store.logout();
+        router.push({name: "home"});
+        componentStore.authDialog = true;
     }
 
     return Promise.reject(e);

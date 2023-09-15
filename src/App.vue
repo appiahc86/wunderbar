@@ -1,6 +1,10 @@
 <script setup>
 import AppHeader from "@/components/layouts/AppHeader.vue";
 import AppFooter from "@/components/layouts/AppFooter.vue";
+import Toast from "primevue/toast";
+import { useToast } from "primevue/usetoast";
+
+window.toast = useToast();
 
 </script>
 
@@ -12,6 +16,7 @@ import AppFooter from "@/components/layouts/AppFooter.vue";
 
 <AppFooter />
 
+  <Toast position="top-right" style="padding: 0;" class="my-toast"/>
 </template>
 
 <style scoped>
