@@ -1,6 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import Home from '../views/HomeView.vue';
 import Contact from "@/views/ContactView.vue";
+import ColofonView from "@/views/ColofonView.vue";
+import menuRouter from "@/router/menu";
 import {useComponentStore} from "@/store/componentStore";
 import {useHomeStore} from "@/store/home";
 
@@ -14,12 +16,16 @@ const routes = [
     {
         path: '/contact',
         name: 'contact',
-        component: Contact,
-        meta: {requiresAuth: true}
+        component: Contact
+    },
+    {
+        path: '/colofon',
+        name: 'colofon',
+        component: ColofonView
     },
    
     //Load imported routes
-   // ...userRoutes,
+   ...menuRouter,
 
 //    redirect to home page if route not found
     {

@@ -1,24 +1,21 @@
 <script setup>
-import {onMounted, ref} from "vue";
-import FloatingCart from "@/components/FloatingCart.vue";
 import MenuItems from "@/components/menuItems/MenuItems.vue";
 import Menu from "@/components/menu/Menu.vue";
-import { useHomeStore } from "@/store/home";
-import {useCartStore} from "@/store/cart";
+import {onBeforeRouteLeave} from "vue-router";
+import {useComponentStore} from "@/store/componentStore";
 
-const cartStore = useCartStore();
-
-onMounted(() => {
-
+const componentStore = useComponentStore();
+onBeforeRouteLeave(() => {
+  componentStore.setDefaults();
 })
 </script>
 
 <template>
 <div class="">
-<div class="container-fluid d-flex overflow-hidden" role="main">
+<div class="container-fluid" role="main">
   <div class="row">
 
-    <div class="col-lg-3 d-none d-lg-block d-flex d-lg-block card shadow">
+    <div class="col-lg-3 d-none d-lg-block d-lg-block card shadow">
 
       <Menu />
 
@@ -37,7 +34,6 @@ onMounted(() => {
 
   <br><br><br><br>
 
-  <FloatingCart v-if="cartStore.getLength"/>
 </div>
 </template>
 
@@ -58,5 +54,6 @@ onMounted(() => {
     height: 10em;
   }
 }
+
 
 </style>

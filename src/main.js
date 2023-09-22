@@ -6,7 +6,6 @@ import router from "./router/index.js";
 import App from './App.vue';
 import PrimeVue from 'primevue/config';
 import ToastService from 'primevue/toastservice';
-import LoadScript from "vue-plugin-load-script";
 
 const pinia = createPinia();
 pinia.use(piniaPluginPersistedstate);
@@ -21,7 +20,6 @@ import 'primeicons/primeicons.css';
 const app = createApp(App);
 app.use(PrimeVue);
 app.use(ToastService);
-app.use(LoadScript);
 app.use(router);
 app.use(pinia);
 app.mount('#app');

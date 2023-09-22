@@ -16,13 +16,17 @@ fetchMenu();
 </script>
 
 <template>
-  <aside class="d-none d-lg-block" style="max-height: 200px;">
+  <aside class="d-none d-lg-block" >
     <h4 class="text-center fw-bold" style="margin-top: 40px;">Menü</h4>   <!-- Menu -->
-    <div style="max-height: 50px !important; font-size: 0.9em;">
+    <div style=" font-size: 0.9em;" class="mb-3">
 
       <ul class="list-group text-center fw-bold">
-        <li class="list-group-item menu-list text-capitalize"
-            v-for="men in menu" :key="men.name">{{ men.name }}</li>
+          <router-link :to="{name: 'menu', params: {slug: men.slug}}"
+                       v-for="men in menu" :key="men.name"
+            class="text-decoration-none  menu-list list-group-item text-capitalize">
+            {{ men.name }}
+          </router-link>
+
       </ul>
 
     </div>
@@ -31,8 +35,10 @@ fetchMenu();
 
   <div class="d-inline d-lg-none px-2">
     <template v-for="men in menu" :key="men.name">
+      <router-link :to="{name: 'menu', params: {slug: men.slug}}" class="text-decoration-none">
         <span class="badge text-bg-secondary text-capitalize" style="cursor: pointer;"
         >{{ men.name }}</span>&nbsp;
+      </router-link>
     </template>
   </div>
 

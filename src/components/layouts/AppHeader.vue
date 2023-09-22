@@ -1,8 +1,7 @@
 <script setup>
 
-import {useRouter} from "vue-router";
+import {onBeforeRouteLeave, useRouter} from "vue-router";
 import Sidebar from "primevue/sidebar";
-import {ref} from "vue";
 import Dialog from "primevue/dialog";
 import TabView from 'primevue/tabview';
 import TabPanel from 'primevue/tabpanel';
@@ -13,6 +12,7 @@ import {useComponentStore} from "@/store/componentStore";
 import {useHomeStore} from "@/store/home";
 import PasswordReset from "@/components/auth/PasswordReset.vue";
 import UserProfile from "@/components/user/UserProfile.vue";
+import Orders from "@/components/orders/Orders.vue";
 
 const router = useRouter();
 const store = useHomeStore();
@@ -24,13 +24,18 @@ const openAuth = () => {
   componentStore.authDialog = true;
 }
 
+onBeforeRouteLeave(()=> {
+  componentStore.navigationDialog = false;
+})
+
 </script>
 
 <template>
   <header class="">
     <nav class="navbar navbar-expand navbar-light shadow shadow-sm">
       <div class="container-fluid">
-        <a class="navbar-brand" @click="router.push({naem: 'home'})">
+        <a class="navbar-brand" @click="router.push({name: 'home'})"
+          style="cursor: pointer;">
           <img src="/logo.png" alt="logo" height="40">
           <span class="brand-name fw-bold" translate="no">Pizza Wunderbar</span>
         </a>
@@ -40,13 +45,11 @@ const openAuth = () => {
 
           <div class="collapse navbar-collapse">
             <span v-if="store.isLoggedIn">
-<!--              <Avatar icon="pi pi-user" class="mr-2" size="small" shape="circle" style="cursor: pointer;" />-->
               <div class="dropdown dropstart">
                  <Avatar icon="pi pi-user" class="me-3" data-bs-toggle="dropdown" aria-expanded="false"
                          size="small" shape="circle" style="cursor: pointer;" />
                 <ul class="dropdown-menu">
                   <li><h6 class="dropdown-item">
-<!--                    <span></span>-->
                     <b class="single-line">&nbsp;
                       {{ store.user.name.length > 10 ? store.user.name.slice(0, 10) + '...' : store.user.name }}</b>
                   </h6></li>
@@ -57,9 +60,10 @@ const openAuth = () => {
                        <span>&#128100;</span>
                       &nbsp;Profil</a>
                   </li>
-                    <li><a class="dropdown-item" style="cursor: pointer;">
+                    <li><a class="dropdown-item" style="cursor: pointer;"
+                       @click="componentStore.setDefaults(); componentStore.ordersDialog = true;">
                     <span class="pi pi-thumbs-up"></span>
-                    &nbsp; Aufträge
+                    &nbsp; Bestellungen
                   </a></li>
                   <li><hr class="dropdown-divider"></li>
                   <li><a class="dropdown-item" style="cursor: pointer;" @click="store.logout()">
@@ -85,13 +89,22 @@ const openAuth = () => {
           <div class="col-sm-4">
             <div class="text-center">
               <ul class="list-group text-center fw-bold navbar-menu">
-                <li class="list-group-item menu-list border-0">heim</li>
+
+                  <router-link :to="{name: 'home'}" @click="componentStore.navigationDialog = false;"
+                               class="text-decoration-none text-dark list-group-item menu-list border-0"
+                  >MENÜKARTE
+                  </router-link><!--  Home page  -->
+
                 <li class="list-group-item menu-list border-0" v-if="!store.isLoggedIn"
-                    @click="openAuth">Anmelden / Account erstellen</li>
-                <li class="list-group-item menu-list border-0">Über uns</li>
-                <li class="list-group-item menu-list border-0">Kontaktiere uns</li>
-                <li class="list-group-item menu-list border-0"
-                v-if="store.isLoggedIn">Hey! Innocent</li>
+                    @click="openAuth">ANMELDEN / ACCOUNT ERSTELLEN</li><!--  Registration  -->
+
+                  <router-link :to="{name: 'contact'}" @click="componentStore.navigationDialog = false;"
+                               class="text-decoration-none text-dark list-group-item menu-list border-0"
+                  >KONTAKTDATEN</router-link><!--  Contact  -->
+
+                <router-link :to="{name: 'colofon'}" @click="componentStore.navigationDialog = false;"
+                             class="text-decoration-none text-dark list-group-item menu-list border-0"
+                >IMPRESSUM</router-link><!--    -->
               </ul>
             </div>
           </div>
@@ -138,6 +151,17 @@ const openAuth = () => {
     </div>
   </Dialog>
 
+
+  <!--  Orders -->
+  <Dialog v-model:visible="componentStore.ordersDialog" header="Bestellungen" :style="{ width: '50vw' }"
+          :breakpoints="{ '960px': '75vw', '641px': '100vw' }" position="center" :modal="true">
+    <div class="container-fluid container-lg">
+      <div class="row">
+        <Orders />
+      </div>
+    </div>
+  </Dialog>
+
 </template>
 
 <style scoped>
@@ -152,9 +176,9 @@ const openAuth = () => {
   border-radius: 50px;
 }
 
-.navbar-menu li:hover {
-  background: #0c4128;
-  color: white;
+.menu-list:hover {
+  background: saddlebrown;
+  color: white !important;
   cursor: pointer;
 }
 

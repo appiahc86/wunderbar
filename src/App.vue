@@ -3,7 +3,13 @@ import AppHeader from "@/components/layouts/AppHeader.vue";
 import AppFooter from "@/components/layouts/AppFooter.vue";
 import Toast from "primevue/toast";
 import { useToast } from "primevue/usetoast";
+import FloatingCart from "@/components/FloatingCart.vue";
+import Dialog from "primevue/dialog";
+import {useComponentStore} from "@/store/componentStore";
+import {useCartStore} from "@/store/cart";
 
+const componentStore = useComponentStore();
+const cartStore = useCartStore();
 window.toast = useToast();
 
 </script>
@@ -15,6 +21,22 @@ window.toast = useToast();
   <router-view></router-view>
 
 <AppFooter />
+
+  <button class="floating-button" v-if="cartStore.cart.length"
+          @click="componentStore.cartDialog = true;">
+    <span>
+    <span class="pi pi-shopping-cart"></span>
+      <sup class="text-light fw-bold">&nbsp;{{ cartStore.getLength }}</sup>
+  </span>
+  </button>
+
+  <!--  Cart dialog-->
+  <Dialog v-model:visible="componentStore.cartDialog" maximizable
+          header="Warenkorb" :style="{ width: '100vw' }" maximize
+          position="left" :modal="true">
+    <FloatingCart />
+
+  </Dialog>
 
   <Toast position="top-right" style="padding: 0;" class="my-toast"/>
 </template>
@@ -43,4 +65,6 @@ window.toast = useToast();
     display: none;
   }
 }
+
+
 </style>

@@ -1,16 +1,18 @@
 <script setup>
 import Skeleton from "primevue/skeleton";
-import Upper from "@/components/layouts/Upper.vue";
-import {computed, reactive, ref} from "vue";
+import {computed, reactive, ref, watch} from "vue";
 import Paginator from "primevue/paginator";
 import Dialog from "primevue/dialog";
 import Button from "primevue/button";
 import { formatNumber, currency } from "@/functions";
-import { listMenuItems } from "@/requests/menuItems";
+import {filterMenuItems} from "@/requests/menuItems/filterMenuItems";
 import { useHomeStore } from "@/store/home";
 import {useCartStore} from "@/store/cart";
 import {useComponentStore} from "@/store/componentStore";
+import Menu from "@/components/menu/Menu.vue";
+import {useRoute} from "vue-router";
 
+const route = useRoute();
 const store = useHomeStore();
 const cartStore = useCartStore();
 const componentStore = useComponentStore();
@@ -47,21 +49,32 @@ const openAddToCartModal = (menuItem) => {
 //Add to Cart total
 const addToCartTotal = computed(() => {
   if (addToCartData.selectedChoice)
-  return parseFloat(addToCartData.qty) * parseFloat(addToCartData.selectedChoice.price);
+    return parseFloat(addToCartData.qty) * parseFloat(addToCartData.selectedChoice.price);
   else return parseFloat(addToCartData.qty) * parseFloat(addToCartData.price);
 })
 
 //load menu items
 const fetchMenuItems = async () => {
   loading.value = true;
-  const data = await listMenuItems(store.user.token, page.value, pageSize.value);
+  const data = await filterMenuItems(
+      route.params.slug,
+      store.user.token,
+      page.value,
+      pageSize.value);
   if (data.error) return toast.add({severity:'warn', detail: `${data.error}`, life: 4000});
   menuItems.value = data.menuItems;
   path.value = data.path;
   totalRecords.value = data.totalRecords;
   loading.value = false;
 }
-fetchMenuItems();
+
+  fetchMenuItems();
+
+watch(() => route.params.slug, () => {
+  fetchMenuItems();
+})
+
+
 
 // Show item description
 const showDescription = (e, des) => {
@@ -82,7 +95,7 @@ const selectChoice = (e, choice) => {
   addToCartData.selectedChoice = null;
   const choices = document.querySelectorAll(".choice");
   for (const choice of choices) {
-   choice.classList.remove('choice-active');
+    choice.classList.remove('choice-active');
   }
 
   if (e.target.classList.contains("float-end")){
@@ -105,13 +118,15 @@ const addToCart = () => {
 <template>
   <div>
 
-    <Upper />
+<!--    <Upper />-->
 
     <div class="container-fluid">
+      <div class="d-lg-none mb-2 mt-3 card shadow p-2"><Menu /></div>
 
-      <div class="row mb-3">
+      <h5 class="fw-bold my-4 text-capitalize text-center">
+        <mark>{{ route.params.slug }}</mark></h5>
 
-        <h4 class="text-black-50 my-3"><b>Menüpunkte</b></h4>
+      <div class="row my-3">
 
         <template v-if="menuItems.length">
           <div class="col-md-6 mb-3" v-for="menuItem in menuItems" :key="menuItem.id">
@@ -158,7 +173,7 @@ const addToCart = () => {
         </template>
 
 
-        <!--  I loading   -->
+        <!--  If loading   -->
         <template v-if="loading">
           <template v-for="num in 4" :key="num">
             <div class="col-md-6 mb-3">
@@ -167,7 +182,7 @@ const addToCart = () => {
                   <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
                       <div class="text-xs fw-bold mb-1 text-capitalize" style="font-size: 0.9em;">
-                                <Skeleton class="mb-2 w-25"></Skeleton>
+                        <Skeleton class="mb-2 w-25"></Skeleton>
                       </div>
                       <div class="h6 mb-0 fw-bold">
                         <small class="text-muted">
@@ -191,7 +206,7 @@ const addToCart = () => {
         </template>
 
 
-<!--    description dialog    -->
+        <!--    description dialog    -->
         <Dialog v-model:visible="componentStore.descriptionDialog" header=" " :style="{ width: '50vw' }"
                 :breakpoints="{ '960px': '75vw', '641px': '100vw' }" position="bottomleft">
           <div class="container-fluid">
@@ -207,7 +222,7 @@ const addToCart = () => {
         <!--    Add to Cart dialog    -->
         <Dialog v-model:visible="componentStore.addToCartDialog" header=" " :style="{ width: '80vw' }"
                 :breakpoints="{ '960px': '85vw', '641px': '100vw' }" position="center"
-              :modal="true">
+                :modal="true">
           <div class="container-fluid container-lg">
             <div class="row">
               <div class="col-md-7">
@@ -235,16 +250,16 @@ const addToCart = () => {
                 <div class="text-center">
                   <div class="d-inline-flex" style="font-size: 2em;">
                     <img src="/img/minus.svg" alt="minus-icon" class="image-buttons"
-                    :class="{'inactive-image-button': addToCartData.qty < 2}"
-                    @click="addToCartData.qty >1 ? addToCartData.qty-- : ''">&nbsp;
+                         :class="{'inactive-image-button': addToCartData.qty < 2}"
+                         @click="addToCartData.qty >1 ? addToCartData.qty-- : ''">&nbsp;
                     <h6 class="m-auto">{{ addToCartData.qty }}</h6>&nbsp;
                     <img src="/img/plus.svg" alt="plus-icon" class="image-buttons"
-                    @click="addToCartData.qty++">
+                         @click="addToCartData.qty++">
                   </div>
                   <br>
                   <Button :label="`addiere ${addToCartData.qty} für ${formatNumber(addToCartTotal)} ${currency}`"
                           type="button" class="p-button  p-button-rounded mt-2 px-4 py-2"
-                    @click="addToCart"/>
+                          @click="addToCart"/>
                 </div>
 
               </div>

@@ -2,28 +2,48 @@
 import Button from "primevue/button";
 import RadioButton from "primevue/radiobutton";
 import {useCartStore} from "@/store/cart";
-import {currency, formatNumber} from "@/functions";
+import {currency, formatNumber, isValidPhoneNumberForCountry} from "@/functions";
 import {onBeforeRouteLeave} from "vue-router";
-import {onMounted, ref} from "vue";
+import {onMounted, reactive, ref, watch} from "vue";
 import {useHomeStore} from "@/store/home";
-import GoogleAddressAutocomplete from 'vue3-google-address-autocomplete'
 import axios from "@/axios";
 import {useComponentStore} from "@/store/componentStore";
-import Dialog from "primevue/dialog";
-// import { loadScript } from "vue-plugin-load-script";
+import {AsYouType} from 'libphonenumber-js'
 
 
-const address = ref('');
+const address = ref();
 
-const callbackFunction = (place) => {
-  console.log(place);
-}
 
 const componentStore = useComponentStore();
 const cartStore = useCartStore();
 const store = useHomeStore();
-const paymentMethod = ref('cash')
 const loading = ref(false);
+
+const paymentMethod = ref('cash');
+const note = ref('');
+const error = ref("");
+const deliveryAddress = reactive({
+  street: '', houseNumber: '', postCode: '', city: 'Braunschweig',
+  floor: '', phone: store.user.phone
+})
+
+
+watch(()=> store.user.phone, (value) => {
+  deliveryAddress.phone = value;
+})
+
+
+//As you type
+const formatPhoneNumber = () => {
+  if (/^[0-9]*$/.test(deliveryAddress.phone)){
+
+    const asYouType = new AsYouType('DE')
+    const res = asYouType.input(deliveryAddress.phone);
+    // console.log(asYouType.getNumber().number)
+    deliveryAddress.phone = res;
+  }else deliveryAddress.phone = "";
+
+}
 
 //Increment
 const increment = (data) => {
@@ -38,7 +58,7 @@ const decrement = (data) => {
   }
 }
 
-onBeforeRouteLeave(() => componentStore.setDefaults() )
+// onBeforeRouteLeave(() => componentStore.setDefaults() )
 
 function initMap() {
 
@@ -55,27 +75,34 @@ function initMap() {
   autocomplete.addListener('place_changed', () => {
     let place = autocomplete.getPlace();
     if (!place.geometry){
-      document.querySelector("#autocomplete").placeholder = "Enter Place"
+      document.querySelector("#autocomplete").placeholder = "Adresse"
     }else {
-      console.log(place.name)
+      console.log(place)
     }
   })
 
 }
 
 onMounted(() => {
-
+// initMap();
 })
 
 const processOrder = async () => {
   try {
     loading.value = true;
+    error.value = "";
+    //If phone number is not valid
+   if(!isValidPhoneNumberForCountry(deliveryAddress.phone, 'DE')){
+     return error.value = "Bitte geben Sie eine gültige Telefonnummer ein";
+   }
 
-    const response = await  axios.post('/orders/create',
+    const response = await  axios.post('/orders',
         {
           cart: cartStore.cart,
+          deliveryAddress,
           deliveryFee: cartStore.deliveryFee,
-          paymentMethod: paymentMethod.value
+          paymentMethod: paymentMethod.value,
+          note: note.value
         },
         {
           headers: {
@@ -90,7 +117,8 @@ const processOrder = async () => {
     }
 
   }catch (e) {
-    if (e.response) return toast.add({severity:'warn', detail: `${e.response.data}`, life: 4000});
+    if (e.response)
+      return toast.add({severity:'warn', detail: `${e.response.data}`, life: 4000});
     if (e.request && e.request.status === 0) {
       return toast.add({severity:'error',
         detail: `Leider wurde die Verbindung zum Server abgelehnt. Bitte überprüfen Sie Ihre Internetverbindung oder versuchen Sie es später erneut`,
@@ -108,111 +136,10 @@ const processOrder = async () => {
 </script>
 
 <template>
-  <button class="floating-button" @click="componentStore.cartDialog = true;">
-    <span>
-    <span class="pi pi-shopping-cart"></span>
-      <sup class="text-light fw-bold">&nbsp;{{ cartStore.getLength }}</sup>
-  </span>
-  </button>
 
-<!--  <div class="offcanvas offcanvas-bottom h-100" tabindex="-1" id="cartButton" aria-labelledby="offcanvasBottomLabel">-->
-<!--    <div class="offcanvas-header text-center">-->
-<!--      <h5 class="offcanvas-title" id="offcanvasBottomLabel"></h5>-->
-<!--      <button type="button" class="btn-close" data-bs-dismiss="offcanvas"-->
-<!--              aria-label="Close" id="close-button"></button>-->
-<!--    </div>-->
-<!--    <div class="offcanvas-body small">-->
-<!--     <div class="container-fluid container-lg">-->
-<!--       <div class="row justify-content-center">-->
-<!--         <div class="col-lg-6">-->
-<!--           <h5 class="text-center fw-bold">Deine Bestellung</h5>-->
-<!--           <div class="container-fluid">-->
-
-<!--             <template v-for="(item, index) in cartStore.cart" :key="index">-->
-<!--               <div class="row">-->
-<!--                 <div class="col-2"><b>{{ item.qty }}x</b></div>-->
-<!--                 <div class="col">-->
-<!--                   <span class="text-capitalize">{{ item.name }} </span><br>-->
-<!--                   <small class="text-muted" v-if="item.selectedChoice">{{ item.selectedChoice }}</small>-->
-<!--                   <small class="text-light" v-else>.</small>-->
-<!--                 </div>-->
-<!--                 <div class="col" style="text-align: right;">-->
-<!--                   {{ formatNumber(item.price * item.qty) }} {{ currency }}-->
-<!--                 </div>-->
-<!--               </div>-->
-<!--               <div class="row">-->
-<!--                 <div class="col-2">-->
-<!--                   <img src="/img/minus.svg" style="cursor: pointer;" alt="minus-icon"-->
-<!--                         @click="decrement(item)">-->
-<!--                 </div>-->
-<!--                 <div class="col"></div>-->
-<!--                 <div class="col" style="text-align: right;">-->
-<!--                   <img src="/img/plus.svg" style="cursor: pointer;" alt="plus-icon"-->
-<!--                   @click="increment(item)">-->
-<!--                 </div>-->
-<!--               </div>-->
-<!--               <hr>-->
-<!--             </template>-->
-
-
-
-<!--           </div>-->
-
-<!--         </div>-->
-
-<!--&lt;!&ndash;     Payment and shipping address    &ndash;&gt;-->
-<!--         <div class="col-lg-6">-->
-<!--           <div class="text-center"> <small class="text-muted">Pay With</small></div>-->
-
-<!--             <div class="d-flex justify-content-center mb-3">-->
-<!--               <div class="d-flex flex-wrap gap-3">-->
-<!--                 <div class="flex align-items-center">-->
-<!--                   <RadioButton v-model="paymentMethod" inputId="p1" name="paymentMethod" value="cash" />-->
-<!--                   <label for="p1" class="ms-1"> Cash</label>-->
-<!--                 </div>-->
-<!--                 <div class="flex align-items-center">-->
-<!--                   <RadioButton v-model="paymentMethod" inputId="p2" name="paymentMethod" value="cc" />-->
-<!--                   <label for="p2" class="ms-1"> Credit Card</label>-->
-<!--                 </div>-->
-<!--               </div>-->
-<!--             </div>-->
-
-
-<!--           <div class="text-center">-->
-<!--             <small class="text-center text-muted">Delivery Address</small><br>-->
-<!--             <input type="text" ref="address" id="autocomplete" class="mb-2 form-control shadow-none">-->
-<!--             <textarea cols="10" rows="5" class="form-control shadow-none"></textarea>-->
-
-<!--&lt;!&ndash;             <GoogleAddressAutocomplete&ndash;&gt;-->
-<!--&lt;!&ndash;                 apiKey="AIzaSyCqHwzNQBLQ1SRJEtNQUly6dJV9qIaAZwg"&ndash;&gt;-->
-<!--&lt;!&ndash;                 v-model="address"&ndash;&gt;-->
-<!--&lt;!&ndash;                 @callback="callbackFunction"&ndash;&gt;-->
-<!--&lt;!&ndash;                 class="form-control"&ndash;&gt;-->
-<!--&lt;!&ndash;                 placeholder="placeholder if you wish"&ndash;&gt;-->
-<!--&lt;!&ndash;             />&ndash;&gt;-->
-<!--           </div>-->
-
-<!--           <div class="text-center">-->
-<!--             <Button label="Weitermachen" type="button" :loading="loading"-->
-<!--                     class="p-button  p-button-rounded my-4 px-4 py-2"-->
-<!--                @click="proccessOrder"/>-->
-<!--           </div>-->
-
-
-<!--         </div>-->
-
-
-<!--       </div>-->
-<!--     </div>-->
-<!--    </div>-->
-<!--  </div>-->
-
-  <Dialog v-model:visible="componentStore.cartDialog" maximizable
-          header="Warenkorb" :style="{ width: '100vw' }" maximize
-          position="left" :modal="true">
-    <div class="container-fluid container-lg">
+    <div class="container-fluid">
       <div class="row justify-content-center">
-        <div class="col-lg-6">
+        <div class="col-lg-5">
           <h5 class="text-center fw-bold">Deine Bestellung</h5>
           <div class="container-fluid">
 
@@ -267,43 +194,130 @@ const processOrder = async () => {
 
         </div>
 
-        <!--     Payment and shipping address    -->
-        <div class="col-lg-6">
-          <div class="text-center"> <small class="text-muted">Pay With</small></div>
+        <!--     Payment    -->
+        <div class="col-lg-7">
+          <div class="text-center"> <small class="text-muted">Bezahle mit</small></div>
+
+          <form @submit.prevent="processOrder">
 
           <div class="d-flex justify-content-center mb-3">
             <div class="d-flex flex-wrap gap-3">
               <div class="flex align-items-center">
                 <RadioButton v-model="paymentMethod" inputId="p1" name="paymentMethod" value="cash" />
-                <label for="p1" class="ms-1"> Cash</label>
+                <label for="p1" class="ms-1"> Barzahlung</label>
               </div>
               <div class="flex align-items-center">
-                <RadioButton v-model="paymentMethod" inputId="p2" name="paymentMethod" value="cc" />
-                <label for="p2" class="ms-1"> Credit Card</label>
+                <RadioButton v-model="paymentMethod" disabled
+                             inputId="p2" name="paymentMethod" value="cc" />
+                <label for="p2" class="ms-1"> Kreditkarte</label>
               </div>
             </div>
           </div>
 
 
-          <div class="text-center">
-            <small class="text-center text-muted">Delivery Address</small><br>
-            <input type="text" ref="address" id="autocomplete" class="mb-2 form-control shadow-none">
-            <textarea cols="10" rows="5" class="form-control shadow-none"></textarea>
 
-            <!--             <GoogleAddressAutocomplete-->
-            <!--                 apiKey="AIzaSyCqHwzNQBLQ1SRJEtNQUly6dJV9qIaAZwg"-->
-            <!--                 v-model="address"-->
-            <!--                 @callback="callbackFunction"-->
-            <!--                 class="form-control"-->
-            <!--                 placeholder="placeholder if you wish"-->
-            <!--             />-->
+            <!-- ...........    delivery address ...............   -->
+          <div class="row">
+
+                  <!--Street Name-->
+            <div class="col-lg-6 mb-3">
+              <small class="fw-bold float-start">Straße
+                <span class="text-danger">*</span></small>
+              <div class="input-group">
+                <div class="input-group-text"><span class="pi pi-map-marker"></span></div>
+                <input type="text" placeholder="Straßenname eingeben" required
+                       class="form-control shadow-none"
+                       v-model.trim="deliveryAddress.street">
+              </div>
+            </div>
+
+            <!--House Number-->
+            <div class="col-lg-6 mb-3">
+              <small class="fw-bold float-start">Hausnummer
+                <span class="text-danger">*</span></small>
+              <div class="input-group">
+                <div class="input-group-text"><span class="pi pi-home"></span></div>
+                <input type="text"  class="form-control shadow-none" required
+                       v-model.trim="deliveryAddress.houseNumber"
+                       placeholder="Hausnummer eingeben"
+                      >
+              </div>
+            </div>
+
+            <!--PostCode-->
+            <div class="col-lg-6 mb-3">
+              <small class="fw-bold float-start">Postleitzahl
+                <span class="text-danger">*</span></small>
+              <div class="input-group">
+                <div class="input-group-text"><span class="pi pi-map-marker"></span></div>
+                <input type="text" placeholder="Postleitzahl eingeben"
+                       class="form-control shadow-none"  required
+                       v-model.trim="deliveryAddress.postCode">
+              </div>
+            </div>
+
+            <!--City-->
+            <div class="col-lg-6 mb-3">
+              <small class="fw-bold float-start">Stadt
+                <span class="text-danger">*</span></small>
+              <div class="input-group">
+                <div class="input-group-text"><span class="pi pi-map-marker"></span></div>
+                <input type="text" placeholder="Stadtname eingeben" disabled
+                       class="form-control shadow-none" v-model="deliveryAddress.city">
+              </div>
+            </div>
+
+            <!--Floor-->
+            <div class="col-lg-6 mb-3">
+              <small class="fw-bold float-start">Etage (freiwillig)</small>
+              <div class="input-group">
+                <div class="input-group-text"><span class="pi pi-map-marker"></span></div>
+                <input type="text" placeholder="Etagennummer eingeben"
+                       class="form-control shadow-none" v-model.trim="deliveryAddress.floor">
+              </div>
+            </div>
+
+            <!--Phone-->
+            <div class="col-lg-6 mb-3">
+              <small class="fw-bold float-start">Telefonnummer
+                <span class="text-danger">*</span></small>
+              <div class="input-group">
+                <div class="input-group-text">+49</div>
+                <input type="text" placeholder="Telefonnummer" required
+                       class="form-control shadow-none" v-model="deliveryAddress.phone"
+                  @input="formatPhoneNumber">
+              </div>
+            </div>
+
+
+            <!--Note-->
+            <div class="col-lg-6 mb-3">
+              <small class="fw-bold float-start">Anmerkung hinzufügen (freiwillig)</small>
+              <div class="input-group">
+                <div class="input-group-text"><span class="pi pi-map-marker"></span></div>
+                <input type="text" placeholder="Anmerkung hinzufügen"
+                       class="form-control shadow-none" v-model.trim="note">
+              </div>
+            </div>
+
+
           </div>
 
+
+
+
+
+
           <div class="text-center">
-            <Button label="Weitermachen" type="button" :loading="loading"
-                    class="p-button  p-button-rounded my-4 px-4 py-2"
-                    @click="processOrder"/>
+            <div class="text-danger" v-if="error">
+              <small>{{ error }}</small>
+            </div>
+            <Button label="Weitermachen" type="submit" :loading="loading"
+                    class="p-button  p-button-rounded my-4 px-4 py-2"/>
           </div>
+
+          </form>
+
 
 
         </div>
@@ -311,22 +325,21 @@ const processOrder = async () => {
 
       </div>
     </div>
-  </Dialog>
+<!--  </Dialog>-->
 
 </template>
 
 <style scoped>
-.floating-button {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  background-color: grey;
-  color: white;
-  border: none;
-  cursor: pointer;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
 }
 </style>
