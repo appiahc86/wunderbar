@@ -126,43 +126,47 @@ const addToCart = () => {
 
       <div class="row my-3">
 
-        <template v-if="menuItems.length">
-          <div class="col-md-6 mb-3" v-for="menuItem in menuItems" :key="menuItem.id">
-            <div class="card shadow shadow-sm h-100 menu-item-card" @click="openAddToCartModal(menuItem)">
-              <div class="card-body">
-                <div class="row no-gutters align-items-center">
-                  <div class="col mr-2">
-                    <div class="text-xs fw-bold mb-1 text-capitalize" style="font-size: 0.9em;">
-                      {{ menuItem.name }}
-                      <span class="pi pi-info-circle menu-item-info" v-if="menuItem.description"
-                            title="Weitere Informationen anzeigen" style="z-index: 100;"
-                            @click="showDescription($event, menuItem.description)"></span>
+        <!--  If loading is complete  -->
+        <template v-if="!loading">
+          <template v-if="menuItems.length">
+            <div class="col-md-6 mb-3" v-for="menuItem in menuItems" :key="menuItem.id">
+              <div class="card shadow shadow-sm h-100 menu-item-card" @click="openAddToCartModal(menuItem)">
+                <div class="card-body">
+                  <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                      <div class="text-xs fw-bold mb-1 text-capitalize" style="font-size: 0.9em;">
+                        {{ menuItem.name }}
+                        <span class="pi pi-info-circle menu-item-info" v-if="menuItem.description"
+                              title="Weitere Informationen anzeigen" style="z-index: 100;"
+                              @click="showDescription($event, menuItem.description)"></span>
+                      </div>
+                      <div class="h6 mb-0 fw-bold">
+                        <small class="text-muted" style="font-size: 0.85em;">{{ menuItem.shortDescription }}</small>
+                      </div>
                     </div>
-                    <div class="h6 mb-0 fw-bold">
-                      <small class="text-muted" style="font-size: 0.85em;">{{ menuItem.shortDescription }}</small>
+                    <div class="col-auto">
+                      <img :src="path + menuItem.image" alt="image"
+                           class="rounded-3 menu-item-img" v-if="menuItem.image">
+                      <img src="/img/dummy_200x200.svg" alt="image"
+                           class="rounded-3 menu-item-img" v-else>
                     </div>
                   </div>
-                  <div class="col-auto">
-                    <img :src="path + menuItem.image" alt="image"
-                         class="rounded-3 menu-item-img" v-if="menuItem.image">
-                    <img src="/img/dummy_200x200.svg" alt="image"
-                         class="rounded-3 menu-item-img" v-else>
-                  </div>
-                </div>
-                <br>
-                <div class="row no-gutters align-items-center">
-                  <div class="col mr-2">
-                    <div class="h6 mb-0 fw-bold" style="font-size: 0.9em;">
-                      {{ formatNumber(menuItem.price) }} {{ currency }}</div>
-                  </div>
-                  <div class="col-auto">
-                    <img src="/img/plus.svg" alt="plus icon" class="mt-0">
+                  <br>
+                  <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                      <div class="h6 mb-0 fw-bold" style="font-size: 0.9em;">
+                        {{ formatNumber(menuItem.price) }} {{ currency }}</div>
+                    </div>
+                    <div class="col-auto">
+                      <img src="/img/plus.svg" alt="plus icon" class="mt-0">
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        </template>
+          </template>
+        </template>   <!--  ./ If loading is complete  -->
+
 
         <template v-if="menuItems.length < 2 && !loading">
           <div style="margin-bottom: 10rem;"></div>
@@ -170,7 +174,7 @@ const addToCart = () => {
 
 
 
-        <template v-if="totalRecords > 9">
+        <template v-if="totalRecords > 9 && !loading">
           <Paginator :rows="pageSize" :totalRecords="totalRecords" @page="onPage($event)"
           ></Paginator>
         </template>
