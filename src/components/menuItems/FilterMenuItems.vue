@@ -174,10 +174,10 @@ const addToCart = () => {
 
 
 
-<!--        <template v-if="totalRecords > 9 && !loading">-->
+        <template v-if="!loading">
           <Paginator :rows="pageSize" :totalRecords="totalRecords" @page="onPage($event)"
               :alwaysShow="false"></Paginator>
-<!--        </template>-->
+        </template>
 
 
         <!--  If loading   -->
