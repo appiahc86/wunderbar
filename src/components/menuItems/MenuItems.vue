@@ -156,11 +156,10 @@ const addToCart = () => {
         </template> <!-- ./ If loading is complete -->
 
 
-        <template v-if="!loading">
           <Paginator :rows="pageSize" :totalRecords="totalRecords" @page="onPage($event)"
-            :alwaysShow="false">
+            :alwaysShow="false" :class="{'invisible': loading}">
           </Paginator>
-        </template>
+
 
 
         <template v-if="menuItems.length < 2 && !loading">

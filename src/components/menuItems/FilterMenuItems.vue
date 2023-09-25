@@ -176,7 +176,7 @@ const addToCart = () => {
 
         <template v-if="!loading">
           <Paginator :rows="pageSize" :totalRecords="totalRecords" @page="onPage($event)"
-              :alwaysShow="false"></Paginator>
+              :alwaysShow="false" :class="{'invisible': loading}"></Paginator>
         </template>
 
 
