@@ -1,17 +1,8 @@
 <script setup>
-import {ref} from "vue";
-import {listMenu} from "@/requests/menu";
 import {useHomeStore} from "@/store/home";
+import Skeleton from "primevue/skeleton";
 
-const homeStore = useHomeStore()
-const menu = ref([]);
-
-const fetchMenu = async () => {
-  const data = await listMenu(homeStore.token);
-  if (data.error) return toast.add({severity:'warn', detail: `${data.error}`, life: 4000});
-  menu.value = data.menu;
-}
-fetchMenu();
+const store = useHomeStore();
 
 </script>
 
@@ -20,27 +11,51 @@ fetchMenu();
     <h4 class="text-center fw-bold" style="margin-top: 40px;">Menü</h4>   <!-- Menu -->
     <div style=" font-size: 0.9em;" class="mb-3">
 
-      <ul class="list-group text-center fw-bold">
+      <template v-if="store.menuLoading">
+        <ul class="list-group text-center fw-bold">
+          <li v-for="men in 5" :key="men"
+                       class="text-decoration-none  menu-list list-group-item text-capitalize">
+            <Skeleton class="w-50 mx-auto"></Skeleton>
+          </li>
+        </ul>
+      </template>
+
+      <template v-else>
+        <ul class="list-group text-center fw-bold">
           <router-link :to="{name: 'menu', params: {slug: men.slug}}"
-                       v-for="men in menu" :key="men.name"
-            class="text-decoration-none  menu-list list-group-item text-capitalize">
+                       v-for="men in store.menu" :key="men.name"
+                       class="text-decoration-none  menu-list list-group-item text-capitalize">
             {{ men.name }}
           </router-link>
-
-      </ul>
+        </ul>
+      </template>
 
     </div>
 
   </aside>
 
-  <div class="d-inline d-lg-none px-2">
-    <template v-for="men in menu" :key="men.name">
-      <router-link :to="{name: 'menu', params: {slug: men.slug}}" class="text-decoration-none">
+  <template v-if="store.menuLoading">
+    <div class="d-inline d-lg-none px-2">
+      <template v-for="men in 5" :key="men">
+        <span class="text-decoration-none">
+        <span class="badge text-capitalize" style="cursor: pointer;">
+         <Skeleton :style="{width: '10vw'}"></Skeleton>
+        </span>&nbsp;
+        </span>
+      </template>
+    </div>
+  </template>
+
+  <template v-else>
+    <div class="d-inline d-lg-none px-2">
+      <template v-for="men in store.menu" :key="men.name">
+        <router-link :to="{name: 'menu', params: {slug: men.slug}}" class="text-decoration-none">
         <span class="badge text-bg-secondary text-capitalize" style="cursor: pointer;"
         >{{ men.name }}</span>&nbsp;
-      </router-link>
-    </template>
-  </div>
+        </router-link>
+      </template>
+    </div>
+  </template>
 
 </template>
 
@@ -54,6 +69,6 @@ aside {
 }
 .menu-list:hover {
   background: saddlebrown;
-  color: white;
+  color: white !important;
 }
 </style>

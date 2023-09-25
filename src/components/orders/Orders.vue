@@ -66,7 +66,6 @@ const viewOrderDetails = async (id) => {
         }
     )
     if (response.status === 200){
-      console.log(response.data.order)
       orderDetails.value = response.data.order;
     }
 
@@ -120,7 +119,7 @@ const getStatus = (payload) => {
             <template #loading>
               <h6 class="text-white fw-bold">Daten werden geladen. Bitte warten. <span class="spinner-border spinner-border-sm"></span></h6>
             </template>
-            <Column field="id" header="Order Id" sortable class="data-table-font-size">
+            <Column field="id" header="Auftragsnummer" sortable class="data-table-font-size">
               <template #body="{data}">
                 <td>
                   {{ data.id }}
@@ -128,7 +127,7 @@ const getStatus = (payload) => {
               </template>
             </Column>
 
-            <Column field="orderDate" header="Date"  class="data-table-font-size">
+            <Column field="orderDate" header="Datum"  class="data-table-font-size">
               <template #body="{data}">
                 <td>
                   {{ moment(data.orderDate).format("YYYY-MM-DD")}} {{ moment(data.orderDate).format("h:mm:ss a") }}
@@ -136,25 +135,25 @@ const getStatus = (payload) => {
               </template>
             </Column>
 
-            <Column field="total" header="Total"  class="data-table-font-size">
+            <Column field="total" header="Gesamt"  class="data-table-font-size">
               <template #body="{data}">
                 <td class="text-capitalize">{{ data.total }}</td>
               </template>
             </Column>
 
-            <Column field="deliveryStatus" header="Status"  class="data-table-font-size">
+            <Column field="deliveryStatus" header="Lieferstatus"  class="data-table-font-size">
               <template #body="{data}">
-                <td class="text-capitalize">{{ data.deliveryStatus }}</td>
+                <td class="text-capitalize">{{ getStatus(data.deliveryStatus) }}</td>
               </template>
             </Column>
 
-            <Column field="numberOfItems" header="Status"  class="data-table-font-size">
+            <Column field="numberOfItems" header="Anzahl der Teile"  class="data-table-font-size">
               <template #body="{data}">
                 <td>{{ data.numberOfItems }}</td>
               </template>
             </Column>
 
-            <Column header="Details" class="data-table-font-size">
+            <Column header="Details anzeigen" class="data-table-font-size">
               <template #body="{data}">
                 <td>
                 <span class="pi pi-eye" @click="viewOrderDetails(data.id)"  style="cursor: pointer;"

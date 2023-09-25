@@ -1,10 +1,5 @@
 <script setup>
-import {onMounted} from "vue";
 import Menu from "@/components/menu/Menu.vue";
-
-onMounted(() => {
-
-})
 </script>
 
 <template>
@@ -19,19 +14,10 @@ onMounted(() => {
         <span class="d-none d-md-inline">
                    <span class=""> &#10038;</span>
                 <span class=""> &#127949; <small>3.00 €&nbsp;</small></span>
-                <span class="pi pi-shopping-bag"></span>
-                <span class=""><small>&nbsp;Min. 30.00 €</small></span>
                 </span>
 
       </p>
-      <p>
-        <small>
-          Bei diesem Restaurant kannst du Stempel sammeln. Stelle beim Bestellabschluss
-          bitte sicher, dass du dich für unseren Newsletter angemeldet hast,
-          um deine Stempel per E-Mail zu erhalten.
-        </small>
 
-      </p>
     </div>
 
 <!--    Menu   -->

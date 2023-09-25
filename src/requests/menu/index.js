@@ -1,14 +1,10 @@
 import axios from "@/axios";
 
 
-export const listMenu = async (token) => {
+export const listMenu = async () => {
     try {
 
-        const response = await axios.get('/menu',
-            {
-                headers: {'Authorization': `Bearer ${token}`}
-            }
-        )
+        const response = await axios.get('/menu')
 
         if (response.status === 200) {
             return {menu: response.data.menu, error: null};

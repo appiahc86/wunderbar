@@ -17,7 +17,7 @@ onBeforeRouteLeave(() => {
 
     <div class="col-lg-3 d-none d-lg-block d-lg-block card shadow">
 
-      <Menu />
+      <Menu/>
 
     </div><!--Col-lg-3-->
 

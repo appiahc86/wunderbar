@@ -7,10 +7,14 @@ import FloatingCart from "@/components/FloatingCart.vue";
 import Dialog from "primevue/dialog";
 import {useComponentStore} from "@/store/componentStore";
 import {useCartStore} from "@/store/cart";
+import {useHomeStore} from "@/store/home";
 
+const store = useHomeStore();
 const componentStore = useComponentStore();
 const cartStore = useCartStore();
 window.toast = useToast();
+
+store.loadMenu();
 
 </script>
 

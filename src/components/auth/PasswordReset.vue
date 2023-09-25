@@ -36,7 +36,8 @@ const requestCode = async () => {
     )
 
     if (response.status === 200) {
-      passwordResetCode.value  =true;
+      passwordResetCode.value  = true;
+      toast.add({severity:'success', detail: 'E-Mail zum Zurücksetzen des Passworts gesendet', life: 4000});
     }
 
 

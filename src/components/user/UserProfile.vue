@@ -1,10 +1,9 @@
 <script setup>
 import Button from "primevue/button";
-import {reactive, ref} from "vue";
+import {onMounted, reactive, ref} from "vue";
 import axios from "@/axios";
 import {useHomeStore} from "@/store/home";
 import {useComponentStore} from "@/store/componentStore";
-import Dialog from "primevue/dialog";
 
 const store = useHomeStore();
 const componentStore = useComponentStore();
@@ -13,8 +12,18 @@ const error = ref("");
 
 const formData = reactive({
   name: store.user.name, email: store.user.email,
-  phone: store.user.phone, deliveryAddress: store.user.deliveryAddress
+  phone: store.user.phone, deliveryAddress: {
+    street: '', houseNumber: '', postCode: '', city: 'Braunschweig',
+    floor: '', phone: store.user.phone
+  }
 })
+
+//onMounted Hook
+onMounted(() => {
+  if (store.user.deliveryAddress)
+  formData.deliveryAddress = store.user.deliveryAddress
+})
+
 //Update User
 const updateUser = async () => {
 
@@ -32,7 +41,6 @@ const updateUser = async () => {
         '/users/update',
         JSON.stringify({
           name: formData.name,
-          phone: formData.phone,
           deliveryAddress: formData.deliveryAddress
         }),
         {
@@ -52,6 +60,7 @@ const updateUser = async () => {
     }
 
   }catch (e) {
+    console.log(e.message)
     if (e.response) return error.value = e.response.data;
     if (e.request && e.request.status === 0)
       return error.value = `Leider wurde die Verbindung zum Server abgelehnt. Bitte überprüfen Sie Ihre Internetverbindung oder versuchen Sie es später erneut`;
@@ -86,19 +95,81 @@ const updateUser = async () => {
                    v-model.trim="formData.email" disabled>
           </div>
 
-          <small>Telefonnummer</small>
-          <div class="input-group mb-3">
-            <div class="input-group-text"><span class="pi pi-phone"></span> +49</div>
-            <input type="number" class="form-control shadow-none" placeholder=""
-                   v-model.number="formData.phone">
+          <h5 class="text-center mt-3 text-decoration-underline">Lieferadresse</h5>
+
+                        <!--Delivery Address-->
+          <div class="row">
+          <!--Street Name-->
+          <div class="col-lg-6 mb-3">
+            <small class="fw-bold float-start">Straße
+              <span class="text-danger">*</span></small>
+            <div class="input-group">
+              <div class="input-group-text"><span class="pi pi-map-marker"></span></div>
+              <input type="text" placeholder="Straßenname eingeben" required
+                     class="form-control shadow-none"
+                     v-model.trim="formData.deliveryAddress.street">
+            </div>
           </div>
 
-          <small>Lieferadresse</small>
-          <div class="input-group mb-2">
-            <div class="input-group-text"><span class="pi pi-map-marker"></span></div>
-            <input type="text" class="form-control shadow-none" placeholder=""
-                   v-model="formData.deliveryAddress">
+          <!--House Number-->
+          <div class="col-lg-6 mb-3">
+            <small class="fw-bold float-start">Hausnummer
+              <span class="text-danger">*</span></small>
+            <div class="input-group">
+              <div class="input-group-text"><span class="pi pi-home"></span></div>
+              <input type="text"  class="form-control shadow-none" required
+                     v-model.trim="formData.deliveryAddress.houseNumber"
+                     placeholder="Hausnummer eingeben"
+              >
+            </div>
           </div>
+
+          <!--PostCode-->
+          <div class="col-lg-6 mb-3">
+            <small class="fw-bold float-start">Postleitzahl
+              <span class="text-danger">*</span></small>
+            <div class="input-group">
+              <div class="input-group-text"><span class="pi pi-map-marker"></span></div>
+              <input type="text" placeholder="Postleitzahl eingeben"
+                     class="form-control shadow-none"  required
+                     v-model.trim="formData.deliveryAddress.postCode">
+            </div>
+          </div>
+
+          <!--City-->
+          <div class="col-lg-6 mb-3">
+            <small class="fw-bold float-start">Stadt
+              <span class="text-danger">*</span></small>
+            <div class="input-group">
+              <div class="input-group-text"><span class="pi pi-map-marker"></span></div>
+              <input type="text" placeholder="Stadtname eingeben" disabled
+                     class="form-control shadow-none" v-model="formData.deliveryAddress.city">
+            </div>
+          </div>
+
+          <!--Floor-->
+          <div class="col-lg-6 mb-3">
+            <small class="fw-bold float-start">Etage (freiwillig)</small>
+            <div class="input-group">
+              <div class="input-group-text"><span class="pi pi-map-marker"></span></div>
+              <input type="text" placeholder="Etagennummer eingeben"
+                     class="form-control shadow-none" v-model.trim="formData.deliveryAddress.floor">
+            </div>
+          </div>
+
+          <!--Phone-->
+          <div class="col-lg-6 mb-3">
+            <small class="fw-bold float-start">Telefonnummer
+              <span class="text-danger">*</span></small>
+            <div class="input-group">
+              <div class="input-group-text">+49</div>
+              <input type="text" placeholder="Telefonnummer" required
+                     class="form-control shadow-none" v-model="formData.deliveryAddress.phone"
+                     @input="">
+            </div>
+          </div>
+
+</div><!-- // ./row  -->
 
 
           <div class="text-center">

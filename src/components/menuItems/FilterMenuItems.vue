@@ -118,10 +118,8 @@ const addToCart = () => {
 <template>
   <div>
 
-<!--    <Upper />-->
-
     <div class="container-fluid">
-      <div class="d-lg-none mb-2 mt-3 card shadow p-2"><Menu /></div>
+      <div class="d-lg-none mb-2 mt-3 card shadow p-2"><Menu/></div>
 
       <h5 class="fw-bold my-4 text-capitalize text-center">
         <mark>{{ route.params.slug }}</mark></h5>
@@ -165,6 +163,11 @@ const addToCart = () => {
             </div>
           </div>
         </template>
+
+        <template v-if="menuItems.length < 2 && !loading">
+          <div style="margin-bottom: 10rem;"></div>
+        </template>
+
 
 
         <template v-if="totalRecords > 9">

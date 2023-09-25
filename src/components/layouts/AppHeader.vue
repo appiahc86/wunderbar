@@ -83,7 +83,8 @@ onBeforeRouteLeave(()=> {
 
 
 <!--  sideBar  -->
-    <Sidebar v-model:visible="componentStore.navigationDialog" position="top" class="h-50">
+    <Sidebar v-model:visible="componentStore.navigationDialog" position="top"
+             :style="{ height: '40vh' }">
       <div class="container">
         <div class="row justify-content-center">
           <div class="col-sm-4">
@@ -153,8 +154,8 @@ onBeforeRouteLeave(()=> {
 
 
   <!--  Orders -->
-  <Dialog v-model:visible="componentStore.ordersDialog" header="Bestellungen" :style="{ width: '50vw' }"
-          :breakpoints="{ '960px': '75vw', '641px': '100vw' }" position="center" :modal="true">
+  <Dialog v-model:visible="componentStore.ordersDialog" header="Bestellungen" :style="{ width: '90vw' }"
+          :breakpoints="{ '960px': '100vw' }" position="center" :modal="true">
     <div class="container-fluid container-lg">
       <div class="row">
         <Orders />

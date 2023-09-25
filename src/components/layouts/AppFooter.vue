@@ -1,24 +1,47 @@
 <script setup>
+import {useRouter} from "vue-router";
 
+const router = useRouter();
 </script>
 
 <template>
 <div class="pt-4">
 <footer class="py-4">
-  <div class="text-center">
-    <a href="" class="d-inline-block mx-3 text-decoration-none text-secondary">Datenschutzerklärung</a>
-    <a href="" class="d-inline-block mx-3 text-decoration-none text-secondary">Verwendung von Cookies</a>
-    <a href="" class="d-inline-block mx-3 text-decoration-none text-secondary">Bug Bounty</a>
-    <a href="" class="d-inline-block mx-3 text-decoration-none text-secondary">Ethik-Hotline</a>
+
+  <div class="container">
+    <div class="row">
+
+      <div class="col-md-6">
+        <div class="text-center">
+          <h2>KONTAKT</h2>
+          <div class="fst-italic">
+            Pizza Wunderbar <br>
+            Frankfurter Straße 10 <br>
+            38122 Braunschweig <br>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="text-center">
+          <h2>INFO</h2>
+          <div>
+            <a class="text-decoration-none text-white" style="cursor: pointer;"
+                @click="router.push({name: 'colofon'})">Impressum</a> <br>
+          </div>
+        </div>
+      </div>
+
+    </div>
   </div>
-  <br>
-  <div class="text-center mb-5" translate="no">&copy; 2023 Pizza-Wunderbar</div>
+  <div class="text-center my-5" translate="no">&copy; 2023 Pizza-Wunderbar</div>
 </footer>
 </div>
 </template>
 
 <style scoped>
 footer {
-  background: #e5e6e7;
+  background: #0a3847;
+  color: white;
 }
 </style>

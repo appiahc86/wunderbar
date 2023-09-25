@@ -3,15 +3,11 @@ import Button from "primevue/button";
 import RadioButton from "primevue/radiobutton";
 import {useCartStore} from "@/store/cart";
 import {currency, formatNumber, isValidPhoneNumberForCountry} from "@/functions";
-import {onBeforeRouteLeave} from "vue-router";
-import {onMounted, reactive, ref, watch} from "vue";
+import {onMounted, reactive, ref} from "vue";
 import {useHomeStore} from "@/store/home";
 import axios from "@/axios";
 import {useComponentStore} from "@/store/componentStore";
 import {AsYouType} from 'libphonenumber-js'
-
-
-const address = ref();
 
 
 const componentStore = useComponentStore();
@@ -19,29 +15,36 @@ const cartStore = useCartStore();
 const store = useHomeStore();
 const loading = ref(false);
 
-const paymentMethod = ref('cash');
-const note = ref('');
+
 const error = ref("");
-const deliveryAddress = reactive({
-  street: '', houseNumber: '', postCode: '', city: 'Braunschweig',
-  floor: '', phone: store.user.phone
+const formData = reactive({
+  paymentMethod: 'cash', note: "",
+  deliveryAddress: {
+    street: '', houseNumber: '', postCode: '', city: 'Braunschweig',
+    floor: '', phone: ''
+  }
+
 })
 
 
-watch(()=> store.user.phone, (value) => {
-  deliveryAddress.phone = value;
-})
+
+if (store.user.deliveryAddress && store.user.deliveryAddress.phone){
+  formData.deliveryAddress.street = store.user.deliveryAddress.street;
+  formData.deliveryAddress.houseNumber = store.user.deliveryAddress.houseNumber;
+  formData.deliveryAddress.postCode = store.user.deliveryAddress.postCode;
+  formData.deliveryAddress.floor = store.user.deliveryAddress.floor;
+  formData.deliveryAddress.phone = store.user.deliveryAddress.phone;
+}
 
 
 //As you type
 const formatPhoneNumber = () => {
-  if (/^[0-9]*$/.test(deliveryAddress.phone)){
+  if (/^[0-9 ]*$/.test(formData.deliveryAddress.phone)){
 
     const asYouType = new AsYouType('DE')
-    const res = asYouType.input(deliveryAddress.phone);
     // console.log(asYouType.getNumber().number)
-    deliveryAddress.phone = res;
-  }else deliveryAddress.phone = "";
+    formData.deliveryAddress.phone = asYouType.input(formData.deliveryAddress.phone);
+  }else formData.deliveryAddress.phone = "";
 
 }
 
@@ -92,17 +95,17 @@ const processOrder = async () => {
     loading.value = true;
     error.value = "";
     //If phone number is not valid
-   if(!isValidPhoneNumberForCountry(deliveryAddress.phone, 'DE')){
+   if(!isValidPhoneNumberForCountry(formData.deliveryAddress.phone, 'DE')){
      return error.value = "Bitte geben Sie eine gültige Telefonnummer ein";
    }
 
     const response = await  axios.post('/orders',
         {
           cart: cartStore.cart,
-          deliveryAddress,
           deliveryFee: cartStore.deliveryFee,
-          paymentMethod: paymentMethod.value,
-          note: note.value
+          note: formData.note,
+          deliveryAddress: formData.deliveryAddress,
+          paymentMethod: formData.paymentMethod
         },
         {
           headers: {
@@ -114,6 +117,7 @@ const processOrder = async () => {
     if (response.status === 201){
       componentStore.setDefaults();
       cartStore.clearCart();
+      toast.add({severity:'success', detail: 'Erfolg', life: 4000});
     }
 
   }catch (e) {
@@ -203,11 +207,11 @@ const processOrder = async () => {
           <div class="d-flex justify-content-center mb-3">
             <div class="d-flex flex-wrap gap-3">
               <div class="flex align-items-center">
-                <RadioButton v-model="paymentMethod" inputId="p1" name="paymentMethod" value="cash" />
+                <RadioButton v-model="formData.paymentMethod" inputId="p1" name="paymentMethod" value="cash" />
                 <label for="p1" class="ms-1"> Barzahlung</label>
               </div>
               <div class="flex align-items-center">
-                <RadioButton v-model="paymentMethod" disabled
+                <RadioButton v-model="formData.paymentMethod" disabled
                              inputId="p2" name="paymentMethod" value="cc" />
                 <label for="p2" class="ms-1"> Kreditkarte</label>
               </div>
@@ -227,7 +231,7 @@ const processOrder = async () => {
                 <div class="input-group-text"><span class="pi pi-map-marker"></span></div>
                 <input type="text" placeholder="Straßenname eingeben" required
                        class="form-control shadow-none"
-                       v-model.trim="deliveryAddress.street">
+                       v-model.trim="formData.deliveryAddress.street">
               </div>
             </div>
 
@@ -238,7 +242,7 @@ const processOrder = async () => {
               <div class="input-group">
                 <div class="input-group-text"><span class="pi pi-home"></span></div>
                 <input type="text"  class="form-control shadow-none" required
-                       v-model.trim="deliveryAddress.houseNumber"
+                       v-model.trim="formData.deliveryAddress.houseNumber"
                        placeholder="Hausnummer eingeben"
                       >
               </div>
@@ -252,7 +256,7 @@ const processOrder = async () => {
                 <div class="input-group-text"><span class="pi pi-map-marker"></span></div>
                 <input type="text" placeholder="Postleitzahl eingeben"
                        class="form-control shadow-none"  required
-                       v-model.trim="deliveryAddress.postCode">
+                       v-model.trim="formData.deliveryAddress.postCode">
               </div>
             </div>
 
@@ -263,7 +267,7 @@ const processOrder = async () => {
               <div class="input-group">
                 <div class="input-group-text"><span class="pi pi-map-marker"></span></div>
                 <input type="text" placeholder="Stadtname eingeben" disabled
-                       class="form-control shadow-none" v-model="deliveryAddress.city">
+                       class="form-control shadow-none" v-model="formData.deliveryAddress.city">
               </div>
             </div>
 
@@ -273,7 +277,7 @@ const processOrder = async () => {
               <div class="input-group">
                 <div class="input-group-text"><span class="pi pi-map-marker"></span></div>
                 <input type="text" placeholder="Etagennummer eingeben"
-                       class="form-control shadow-none" v-model.trim="deliveryAddress.floor">
+                       class="form-control shadow-none" v-model.trim="formData.deliveryAddress.floor">
               </div>
             </div>
 
@@ -284,7 +288,7 @@ const processOrder = async () => {
               <div class="input-group">
                 <div class="input-group-text">+49</div>
                 <input type="text" placeholder="Telefonnummer" required
-                       class="form-control shadow-none" v-model="deliveryAddress.phone"
+                       class="form-control shadow-none" v-model="formData.deliveryAddress.phone"
                   @input="formatPhoneNumber">
               </div>
             </div>
@@ -296,7 +300,7 @@ const processOrder = async () => {
               <div class="input-group">
                 <div class="input-group-text"><span class="pi pi-map-marker"></span></div>
                 <input type="text" placeholder="Anmerkung hinzufügen"
-                       class="form-control shadow-none" v-model.trim="note">
+                       class="form-control shadow-none" v-model.trim="formData.note">
               </div>
             </div>
 

@@ -10,7 +10,7 @@ import PageBanner from "@/components/layouts/PageBanner.vue";
   <div class="container">
     <div class="row">
 
-      <div class="col-lg-6">
+      <div class="col-lg-6 mb-4">
         <div class="section-title">
           <h2>KONTAKT</h2>
           <h3>INFORMATIONEN</h3>

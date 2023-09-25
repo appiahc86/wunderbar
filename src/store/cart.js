@@ -11,7 +11,7 @@ export const useCartStore = defineStore('cartStore', {
     state: () => {
         return {
             cart: [],
-            deliveryFee : 0
+            deliveryFee : 3
         }
     },
 

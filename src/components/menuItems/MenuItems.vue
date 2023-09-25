@@ -158,7 +158,7 @@ const addToCart = () => {
         </template>
 
 
-        <!--  I loading   -->
+        <!--  If loading   -->
         <template v-if="loading">
           <template v-for="num in 4" :key="num">
             <div class="col-md-6 mb-3">

@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import router from "../router/index.js";
 import { parse, stringify,  } from 'zipson';
+import {listMenu} from "@/requests/menu";
 
 // You can name the return value of `defineStore()` anything you want,
 // but it's best to use the name of the store and surround it with `use`
@@ -11,7 +12,9 @@ import { parse, stringify,  } from 'zipson';
 export const useHomeStore = defineStore('homeStore', {
     state: () => {
         return {
-            user: {}
+            user: {},
+            menu: [],
+            menuLoading: false
          }
     },
 
@@ -32,7 +35,19 @@ export const useHomeStore = defineStore('homeStore', {
     logout(){
          this.user = {};
         router.push({name: "home"})
-     }
+     },
+
+        //Load Menu
+        async loadMenu(){
+         this.menuLoading = true;
+            const data = await listMenu();
+            if (data.error) {
+                this.menuLoading = false;
+                return toast.add({severity: 'warn', detail: `${data.error}`, life: 4000})
+            }
+            this.menu = data.menu;
+            this.menuLoading = false;
+        }
 
     },
 

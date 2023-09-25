@@ -53,7 +53,7 @@ const router = createRouter({
 router.beforeEach((to, from) => {
     const componentStore = useComponentStore();
     const store = useHomeStore();
-    if (to.meta.requiresAuth && !store.user.token) {
+    if (to.meta.requiresAuth && !store.isLoggedIn()) {
         componentStore.authDialog = true;
         return {
             name: from.name,
