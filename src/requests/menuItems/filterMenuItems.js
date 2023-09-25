@@ -1,7 +1,7 @@
 import axios from "@/axios";
 
 
-export const filterMenuItems = async (menu, token, page, pageSize) => {
+export const filterMenuItems = async (menu, page, pageSize) => {
     try {
 
         const response = await axios.get('/menuItems',
@@ -10,8 +10,7 @@ export const filterMenuItems = async (menu, token, page, pageSize) => {
                     page,
                     pageSize,
                     searchTerm: menu
-                },
-                headers: {'Authorization': `Bearer ${token}`}
+                }
             }
         )
 

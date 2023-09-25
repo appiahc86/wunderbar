@@ -54,7 +54,7 @@ const addToCartTotal = computed(() => {
 //load menu items
 const fetchMenuItems = async () => {
   loading.value = true;
-  const data = await listMenuItems(store.user.token, page.value, pageSize.value);
+  const data = await listMenuItems(page.value, pageSize.value);
   if (data.error) return toast.add({severity:'warn', detail: `${data.error}`, life: 4000});
   menuItems.value = data.menuItems;
   path.value = data.path;
@@ -75,6 +75,7 @@ const showDescription = (e, des) => {
 const onPage = (event) => {
   page.value = event.page + 1;
   fetchMenuItems();
+  window.scrollTo({top: 300, behavior: "smooth"})
 };
 
 //Select Choice
@@ -155,11 +156,12 @@ const addToCart = () => {
         </template> <!-- ./ If loading is complete -->
 
 
-
-        <template v-if="totalRecords > 9 && !loading">
+<!--        <template v-if="totalRecords > 9 && !loading">-->
           <Paginator :rows="pageSize" :totalRecords="totalRecords" @page="onPage($event)"
-          ></Paginator>
-        </template>
+            :alwaysShow="false">
+          </Paginator>
+<!--        </template>-->
+
 
         <template v-if="menuItems.length < 2 && !loading">
           <div style="margin-bottom: 10rem;"></div>
@@ -195,7 +197,6 @@ const addToCart = () => {
               </div>
             </div>
           </template>
-
         </template> <!--  ./ If loading   -->
 
 
@@ -217,8 +218,8 @@ const addToCart = () => {
                 :breakpoints="{ '960px': '85vw', '641px': '100vw' }" position="center"
               :modal="true">
           <div class="container-fluid container-lg">
-            <div class="row">
-              <div class="col-md-7">
+            <div class="row justify-content-center">
+              <div class="col-md-7" v-if="addToCartData.choiceOf.length">
                 <template v-if="addToCartData.choiceOf.length">
                   <h5>verfügbare Auswahlmöglichkeiten</h5>
                   <template v-for="(choice, index) in addToCartData.choiceOf" :key="index">
