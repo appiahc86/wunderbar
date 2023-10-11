@@ -11,7 +11,6 @@ import { useHomeStore } from "@/store/home";
 import {useCartStore} from "@/store/cart";
 import {useComponentStore} from "@/store/componentStore";
 
-const store = useHomeStore();
 const cartStore = useCartStore();
 const componentStore = useComponentStore();
 const page = ref(1);

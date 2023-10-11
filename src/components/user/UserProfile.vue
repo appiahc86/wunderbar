@@ -12,7 +12,7 @@ const error = ref("");
 
 const formData = reactive({
   name: store.user.name, email: store.user.email,
-  phone: store.user.phone, deliveryAddress: {
+         deliveryAddress: {
     street: '', houseNumber: '', postCode: '', city: 'Braunschweig',
     floor: '', phone: store.user.phone
   }

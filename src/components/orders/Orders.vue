@@ -137,7 +137,7 @@ const getStatus = (payload) => {
 
             <Column field="total" header="Gesamt"  class="data-table-font-size">
               <template #body="{data}">
-                <td class="text-capitalize">{{ data.total }}</td>
+                <td class="text-capitalize">{{ formatNumber(data.total) }} {{ currency }}</td>
               </template>
             </Column>
 
