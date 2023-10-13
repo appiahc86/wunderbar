@@ -22,7 +22,7 @@ const store = useHomeStore();
 
       <template v-else>
         <ul class="list-group text-center fw-bold">
-          <router-link :to="{name: 'menu', params: {slug: men.slug}}"
+          <router-link :to="{name: 'menu', params: {id: men.id, slug: men.slug}}"
                        v-for="men in store.menu" :key="men.name"
                        class="text-decoration-none  menu-list list-group-item text-capitalize">
             {{ men.name }}
@@ -49,7 +49,7 @@ const store = useHomeStore();
   <template v-else>
     <div class="d-inline d-lg-none px-2">
       <template v-for="men in store.menu" :key="men.name">
-        <router-link :to="{name: 'menu', params: {slug: men.slug}}" class="text-decoration-none">
+        <router-link :to="{name: 'menu', params: {id: men.id, slug: men.slug}}" class="text-decoration-none">
         <span class="badge text-bg-secondary text-capitalize" style="cursor: pointer;"
         >{{ men.name }}</span>&nbsp;
         </router-link>

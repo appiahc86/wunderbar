@@ -2,7 +2,7 @@ import MenuView from "@/views/menu/MenuView.vue";
 
 const menuRouter = [
     {
-        path: '/menu/:slug',
+        path: '/menu/:id/:slug',
         name: 'menu',
         component: MenuView,
     },
