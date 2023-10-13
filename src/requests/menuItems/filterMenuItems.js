@@ -9,7 +9,7 @@ export const filterMenuItems = async (id, page, pageSize) => {
                 params: {
                     page,
                     pageSize,
-                    searchTerm: menu
+                    searchTerm: id
                 }
             }
         )
