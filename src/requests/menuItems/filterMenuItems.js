@@ -1,7 +1,7 @@
 import axios from "@/axios";
 
 
-export const filterMenuItems = async (menu, page, pageSize) => {
+export const filterMenuItems = async (id, page, pageSize) => {
     try {
 
         const response = await axios.get('/menuItems',

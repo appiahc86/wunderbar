@@ -57,7 +57,7 @@ const addToCartTotal = computed(() => {
 const fetchMenuItems = async () => {
   loading.value = true;
   const data = await filterMenuItems(
-      route.params.slug,
+      route.params.id,
       page.value,
       pageSize.value);
   if (data.error) return toast.add({severity:'warn', detail: `${data.error}`, life: 4000});
