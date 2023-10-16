@@ -44,8 +44,7 @@ const login = async () => {
       const payload = {
         name: response.data.user.name,
         email: response.data.user.email,
-        phone: response.data.user.phone,
-        deliveryAddress: response.data.user.deliveryAddress,
+        deliveryAddress: JSON.parse(response.data.user.deliveryAddress),
         token: response.data.token
       }
       store.setUser(payload);

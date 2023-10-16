@@ -11,17 +11,28 @@ const loading = ref(false);
 const error = ref("");
 
 const formData = reactive({
-  name: store.user.name, email: store.user.email,
+  name: store.user.name,
+  email: store.user.email,
          deliveryAddress: {
-    street: '', houseNumber: '', postCode: '', city: 'Braunschweig',
-    floor: '', phone: store.user.phone
+           street: '',
+           houseNumber: '',
+           postCode: '',
+           city: 'Braunschweig',
+           floor: '',
+           phone: store.user.phone
   }
 })
 
+
+
+
+
 //onMounted Hook
 onMounted(() => {
-  if (store.user.deliveryAddress)
-  formData.deliveryAddress = store.user.deliveryAddress
+  if (store.user.deliveryAddress){
+    formData.deliveryAddress = store.user.deliveryAddress;
+  }
+
 })
 
 //Update User
@@ -60,7 +71,6 @@ const updateUser = async () => {
     }
 
   }catch (e) {
-    console.log(e.message)
     if (e.response) return error.value = e.response.data;
     if (e.request && e.request.status === 0)
       return error.value = `Leider wurde die Verbindung zum Server abgelehnt. Bitte überprüfen Sie Ihre Internetverbindung oder versuchen Sie es später erneut`;
@@ -142,7 +152,7 @@ const updateUser = async () => {
               <span class="text-danger">*</span></small>
             <div class="input-group">
               <div class="input-group-text"><span class="pi pi-map-marker"></span></div>
-              <input type="text" placeholder="Stadtname eingeben" disabled
+              <input type="text" placeholder="Braunschweig" disabled
                      class="form-control shadow-none" v-model="formData.deliveryAddress.city">
             </div>
           </div>
