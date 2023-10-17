@@ -16,6 +16,7 @@ const resetLoginData = () => {
   loginData.email = ''; loginData.password = '';
 }
 
+
 //Login
 const login = async () => {
   try {
@@ -40,20 +41,23 @@ const login = async () => {
     )
 
     if (response.status === 200) {
-      componentStore.authDialog = false;
+
       const payload = {
         name: response.data.user.name,
         email: response.data.user.email,
-        deliveryAddress: JSON.parse(response.data.user.deliveryAddress),
+        deliveryAddress: response.data.user.deliveryAddress,
         token: response.data.token
       }
+
       store.setUser(payload);
       resetLoginData();
+      componentStore.authDialog = false;
       return toast.add({severity:'success', detail: 'Erfolg', life: 4000});
     }
 
 
   }catch (e) {
+
     if (e.response) return error.value = e.response.data;
     if (e.request && e.request.status === 0)
       return error.value = "Leider wurde die Verbindung zum Server abgelehnt. Bitte überprüfen Sie Ihre Internetverbindung oder versuchen Sie es später erneut";
