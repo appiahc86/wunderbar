@@ -8,13 +8,16 @@ import Dialog from "primevue/dialog";
 import {useComponentStore} from "@/store/componentStore";
 import {useCartStore} from "@/store/cart";
 import {useHomeStore} from "@/store/home";
+import {useRoute} from "vue-router";
 
+const route = useRoute()
 const store = useHomeStore();
 const componentStore = useComponentStore();
 const cartStore = useCartStore();
 window.toast = useToast();
 
 store.loadMenu();
+
 
 </script>
 
@@ -26,7 +29,7 @@ store.loadMenu();
 
 <AppFooter />
 
-  <button class="floating-button" v-if="cartStore.cart.length"
+  <button class="floating-button" v-if="cartStore.cart.length && route.name !== 'checkout'"
           @click="componentStore.cartDialog = true;">
     <span>
     <span class="pi pi-shopping-cart"></span>
@@ -35,9 +38,9 @@ store.loadMenu();
   </button>
 
   <!--  Cart dialog-->
-  <Dialog v-model:visible="componentStore.cartDialog" maximizable
-          header="Warenkorb" :style="{ width: '100vw' }" maximize
-          position="left" :modal="true">
+  <Dialog v-model:visible="componentStore.cartDialog" header="Warenkorb" :style="{width: '60vw'}"
+          :breakpoints="{ '960px': '75vw', '641px': '100vw' }"
+          position="center" :modal="true">
     <FloatingCart />
 
   </Dialog>

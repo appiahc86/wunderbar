@@ -3,6 +3,7 @@ import Home from '../views/HomeView.vue';
 import Contact from "@/views/ContactView.vue";
 import ColofonView from "@/views/ColofonView.vue";
 import menuRouter from "@/router/menu";
+import paymentRouter from "@/router/payment";
 import {useComponentStore} from "@/store/componentStore";
 import {useHomeStore} from "@/store/home";
 
@@ -26,6 +27,7 @@ const routes = [
    
     //Load imported routes
    ...menuRouter,
+    ...paymentRouter,
 
 //    redirect to home page if route not found
     {
@@ -53,7 +55,7 @@ const router = createRouter({
 router.beforeEach((to, from) => {
     const componentStore = useComponentStore();
     const store = useHomeStore();
-    if (to.meta.requiresAuth && !store.isLoggedIn()) {
+    if (to.meta.requiresAuth && !store.isLoggedIn) {
         componentStore.authDialog = true;
         return {
             name: from.name,

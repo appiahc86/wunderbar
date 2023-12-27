@@ -130,7 +130,7 @@ const getStatus = (payload) => {
             <Column field="orderDate" header="Datum"  class="data-table-font-size">
               <template #body="{data}">
                 <td>
-                  {{ moment(data.orderDate).format("YYYY-MM-DD")}} {{ moment(data.orderDate).format("h:mm:ss a") }}
+                  {{ moment(data.orderDate).format("YYYY-MM-DD h:mm:ss a") }}
                 </td>
               </template>
             </Column>
