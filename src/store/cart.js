@@ -11,7 +11,8 @@ export const useCartStore = defineStore('cartStore', {
     state: () => {
         return {
             cart: [],
-            deliveryFee : 3
+            zipcodeId: null,
+            deliveryFee: 0
         }
     },
 
@@ -96,13 +97,15 @@ export const useCartStore = defineStore('cartStore', {
 
         clearCart(){
             this.cart = [];
+            this.zipcodeId = null;
+            this.deliveryFee = 0;
         }
     },
 
     persist: {
         key: '_crt',
         storage: sessionStorage,
-        paths: ['cart', 'deliveryFee'],
+        paths: ['cart', 'zipcodeId, deliveryFee'],
         serializer: {
             deserialize: parse,
             serialize: stringify

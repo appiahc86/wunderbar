@@ -25,9 +25,7 @@ const formData = reactive({
     street: '', houseNumber: '', postCode: '', city: 'Braunschweig',
     floor: '', phone: ''
   }
-
 })
-
 
 
 if (store.user.deliveryAddress && store.user.deliveryAddress.phone){

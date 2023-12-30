@@ -4,12 +4,63 @@ import {currency, formatNumber} from "@/functions";
 import {useHomeStore} from "@/store/home";
 import {useComponentStore} from "@/store/componentStore";
 import {onBeforeRouteLeave, useRouter} from "vue-router";
+import {reactive, ref} from "vue";
+import axios from "@/axios";
 
-
+const store = useHomeStore();
 const componentStore = useComponentStore();
 const cartStore = useCartStore();
-const router = useRouter()
+const router = useRouter();
 
+const loading = ref(false);
+const error = ref("");
+const formData = reactive({
+  paymentMethod: 'cash', note: "",
+  deliveryAddress: {
+    street: '', houseNumber: '', postCode: '', city: 'Braunschweig',
+    floor: '', phone: ''
+  }
+
+})
+
+//Load zipcode
+const getZipcode = async () => {
+  try {
+
+    const response = await  axios.post('/zipcode',
+        JSON.stringify({zipcode: formData.deliveryAddress.postCode}),
+        {
+          headers: { 'Authorization': `Bearer ${store.user.token}`}
+        }
+    )
+
+    if (response.status === 200){
+      return  {
+        zipcode: response.data.zipcode,
+        error: null
+      }
+    }
+
+  }catch (e) {
+
+
+    return {
+      zipcode:null,
+      error: 'Entschuldigung, etwas ist schief gelaufen. Bitte versuchen Sie es später noch einmal'
+    }
+
+    // if (e.response) return toast.add({severity:'warn', detail: `${e.response.data}`, life: 4000});
+    // if (e.request && e.request.status === 0) {
+    //   return toast.add({severity:'error',
+    //     detail: `Leider wurde die Verbindung zum Server abgelehnt. Bitte überprüfen Sie Ihre Internetverbindung oder versuchen Sie es später erneut`,
+    //     life: 4000});
+    // }
+    //
+    // return toast.add({severity:'warn', detail: 'Entschuldigung, etwas ist schief gelaufen. Bitte versuchen Sie es später noch einmal',
+    //   life: 4000});
+  }
+
+}
 
 //Increment
 const increment = (data) => {
@@ -24,10 +75,48 @@ const decrement = (data) => {
   }
 }
 
-const goToCheckout = () => {
-  componentStore.setDefaults();
-  router.push({name: 'checkout'});
+
+if (store.user.deliveryAddress && store.user.deliveryAddress.phone){
+  formData.deliveryAddress.street = store.user.deliveryAddress.street;
+  formData.deliveryAddress.houseNumber = store.user.deliveryAddress.houseNumber;
+  formData.deliveryAddress.postCode = store.user.deliveryAddress.postCode;
+  formData.deliveryAddress.floor = store.user.deliveryAddress.floor;
+  formData.deliveryAddress.phone = store.user.deliveryAddress.phone;
 }
+
+const validate = async () => {
+  try {
+
+    loading.value = true;
+    error.value = "";
+    cartStore.zipcodeId = null;
+    cartStore.deliveryFee = 0;
+
+    const zipcode = await getZipcode();
+
+    if (zipcode.error){
+      return error.value = zipcode.error
+    }
+    if (!zipcode.zipcode.length){
+      return error.value = 'Enter valid zipcode'
+    }
+    if (parseFloat(zipcode.zipcode[0].minOrder) > cartStore.subTotal){
+      return error.value = `minimum order is ${zipcode.zipcode[0].minOrder}`
+    }
+
+
+    cartStore.zipcodeId = zipcode.zipcode[0].id;
+    cartStore.deliveryFee = zipcode.zipcode[0].deliveryFee;
+    componentStore.setDefaults();
+    router.push({name: "checkout"})
+
+  }catch (e) {
+
+  }finally { loading.value = false }
+
+
+}
+
 
 </script>
 
@@ -85,19 +174,125 @@ const goToCheckout = () => {
 
             </table>
 
-            <div class="text-center">
-              <button class="btn btn-primary" @click="goToCheckout">
-                Zur Kasse gehen</button>
-            </div>
-
-
 
           </div>
 
         </div>
 
+      </div>
+
+
+
+      <div class="row">
+        <form @submit.prevent="validate">
+
+          <!-- ...........    delivery address ...............   -->
+          <div class="row">
+
+            <!--Street Name-->
+            <div class="col-lg-6 mb-3">
+              <small class="fw-bold float-start">Straße
+                <span class="text-danger">*</span></small>
+              <div class="input-group">
+                <div class="input-group-text"><span class="pi pi-map-marker"></span></div>
+                <input type="text" placeholder="Straßenname eingeben" required
+                       class="form-control shadow-none"
+                       v-model.trim="formData.deliveryAddress.street">
+              </div>
+            </div>
+
+            <!--House Number-->
+            <div class="col-lg-6 mb-3">
+              <small class="fw-bold float-start">Hausnummer
+                <span class="text-danger">*</span></small>
+              <div class="input-group">
+                <div class="input-group-text"><span class="pi pi-home"></span></div>
+                <input type="text"  class="form-control shadow-none" required
+                       v-model.trim="formData.deliveryAddress.houseNumber"
+                       placeholder="Hausnummer eingeben"
+                >
+              </div>
+            </div>
+
+            <!--PostCode-->
+            <div class="col-lg-6 mb-3">
+              <small class="fw-bold float-start">Postleitzahl
+                <span class="text-danger">*</span></small>
+              <div class="input-group">
+                <div class="input-group-text"><span class="pi pi-map-marker"></span></div>
+                <input type="number" placeholder="Postleitzahl eingeben" min="0"
+                       class="form-control shadow-none"  required
+                       v-model.trim="formData.deliveryAddress.postCode">
+              </div>
+            </div>
+
+            <!--City-->
+            <div class="col-lg-6 mb-3">
+              <small class="fw-bold float-start">Stadt
+                <span class="text-danger">*</span></small>
+              <div class="input-group">
+                <div class="input-group-text"><span class="pi pi-map-marker"></span></div>
+                <input type="text" placeholder="Stadtname eingeben" disabled
+                       class="form-control shadow-none" v-model="formData.deliveryAddress.city">
+              </div>
+            </div>
+
+            <!--Floor-->
+            <div class="col-lg-6 mb-3">
+              <small class="fw-bold float-start">Etage (freiwillig)</small>
+              <div class="input-group">
+                <div class="input-group-text"><span class="pi pi-map-marker"></span></div>
+                <input type="text" placeholder="Etagennummer eingeben"
+                       class="form-control shadow-none" v-model.trim="formData.deliveryAddress.floor">
+              </div>
+            </div>
+
+            <!--Phone-->
+            <div class="col-lg-6 mb-3">
+              <small class="fw-bold float-start">Telefonnummer
+                <span class="text-danger">*</span></small>
+              <div class="input-group">
+                <div class="input-group-text">+49</div>
+                <input type="number" placeholder="Telefonnummer" required
+                       class="form-control shadow-none" v-model="formData.deliveryAddress.phone"
+                       @input="formatPhoneNumber">
+              </div>
+            </div>
+
+
+            <!--Note-->
+            <div class="col-lg-6 mb-3">
+              <small class="fw-bold float-start">Anmerkung hinzufügen (freiwillig)</small>
+              <div class="input-group">
+                <div class="input-group-text"><span class="pi pi-map-marker"></span></div>
+                <input type="text" placeholder="Anmerkung hinzufügen"
+                       class="form-control shadow-none" v-model.trim="formData.note">
+              </div>
+            </div>
+
+
+          </div>
+
+
+        <div class="text-center text-danger" v-if="error">
+          <h6>{{ error }}</h6>
+        </div>
+
+        <div class="text-center">
+          <button class="btn btn-primary" disabled v-if="loading">
+            <span class="spinner-border spinner-border-sm"></span> Zur Kasse gehen</button>
+          <button class="btn btn-primary" v-else>
+            Zur Kasse gehen</button>
+        </div>
+
+        </form>
+        <br>
+
+
+
 
       </div>
+
     </div>
 
 
@@ -105,4 +300,14 @@ const goToCheckout = () => {
 
 <style scoped>
 
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
 </style>
