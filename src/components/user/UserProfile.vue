@@ -17,7 +17,7 @@ const formData = reactive({
            street: '',
            houseNumber: '',
            postCode: '',
-           city: 'Braunschweig',
+           town: '',
            floor: '',
            phone: store.user.phone
   }
@@ -25,11 +25,9 @@ const formData = reactive({
 
 
 
-
-
 //onMounted Hook
 onMounted(() => {
-  if (store.user.deliveryAddress){
+  if (store?.user?.deliveryAddress){
     formData.deliveryAddress = store.user.deliveryAddress;
   }
 })
@@ -63,7 +61,7 @@ const updateUser = async () => {
     if (response.status === 200) {
       store.user.name = formData.name;
       store.user.phone = formData.phone;
-      store.user.deliveryAddress = formData.deliveryAddress;
+      store.user.deliveryAddress = response.data.deliveryAddress;
       componentStore.setDefaults();
       return toast.add({severity:'success', detail: 'Erfolg', life: 4000});
 
@@ -147,12 +145,11 @@ const updateUser = async () => {
 
           <!--City-->
           <div class="col-lg-6 mb-3">
-            <small class="fw-bold float-start">Stadt
-              <span class="text-danger">*</span></small>
+            <small class="fw-bold float-start">Stadt</small>
             <div class="input-group">
               <div class="input-group-text"><span class="pi pi-map-marker"></span></div>
               <input type="text" placeholder="Braunschweig" disabled
-                     class="form-control shadow-none" v-model="formData.deliveryAddress.city">
+                     class="form-control shadow-none" v-model="formData.deliveryAddress.town">
             </div>
           </div>
 

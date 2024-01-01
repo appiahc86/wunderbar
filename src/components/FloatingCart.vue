@@ -3,7 +3,7 @@ import {useCartStore} from "@/store/cart";
 import {currency, formatNumber} from "@/functions";
 import {useHomeStore} from "@/store/home";
 import {useComponentStore} from "@/store/componentStore";
-import {onBeforeRouteLeave, useRouter} from "vue-router";
+import {useRouter} from "vue-router";
 import {reactive, ref} from "vue";
 import axios from "@/axios";
 
@@ -15,9 +15,9 @@ const router = useRouter();
 const loading = ref(false);
 const error = ref("");
 const formData = reactive({
-  paymentMethod: 'cash', note: "",
+   note: "",
   deliveryAddress: {
-    street: '', houseNumber: '', postCode: '', city: 'Braunschweig',
+    street: '', houseNumber: '', postCode: '', town: '',
     floor: '', phone: ''
   }
 
@@ -43,21 +43,10 @@ const getZipcode = async () => {
 
   }catch (e) {
 
-
     return {
       zipcode:null,
       error: 'Entschuldigung, etwas ist schief gelaufen. Bitte versuchen Sie es später noch einmal'
     }
-
-    // if (e.response) return toast.add({severity:'warn', detail: `${e.response.data}`, life: 4000});
-    // if (e.request && e.request.status === 0) {
-    //   return toast.add({severity:'error',
-    //     detail: `Leider wurde die Verbindung zum Server abgelehnt. Bitte überprüfen Sie Ihre Internetverbindung oder versuchen Sie es später erneut`,
-    //     life: 4000});
-    // }
-    //
-    // return toast.add({severity:'warn', detail: 'Entschuldigung, etwas ist schief gelaufen. Bitte versuchen Sie es später noch einmal',
-    //   life: 4000});
   }
 
 }
@@ -76,20 +65,27 @@ const decrement = (data) => {
 }
 
 
-if (store.user.deliveryAddress && store.user.deliveryAddress.phone){
+if (store?.user?.deliveryAddress?.phone){
   formData.deliveryAddress.street = store.user.deliveryAddress.street;
   formData.deliveryAddress.houseNumber = store.user.deliveryAddress.houseNumber;
   formData.deliveryAddress.postCode = store.user.deliveryAddress.postCode;
   formData.deliveryAddress.floor = store.user.deliveryAddress.floor;
+  formData.deliveryAddress.town = store.user.deliveryAddress.town;
   formData.deliveryAddress.phone = store.user.deliveryAddress.phone;
 }
 
 const validate = async () => {
   try {
 
+    if (!store.isLoggedIn){
+      componentStore.setDefaults();
+      componentStore.authDialog = true;
+    }
+
     loading.value = true;
     error.value = "";
     cartStore.zipcodeId = null;
+    cartStore.deliveryData = null;
     cartStore.deliveryFee = 0;
 
     const zipcode = await getZipcode();
@@ -98,22 +94,24 @@ const validate = async () => {
       return error.value = zipcode.error
     }
     if (!zipcode.zipcode.length){
-      return error.value = 'Enter valid zipcode'
+      //Sorry, we do not deliver to this address
+      return error.value = 'Leider liefern wir nicht an diese Adresse';
     }
-    if (parseFloat(zipcode.zipcode[0].minOrder) > cartStore.subTotal){
-      return error.value = `minimum order is ${zipcode.zipcode[0].minOrder}`
+    if (parseFloat(zipcode.zipcode[0].minOrder) > cartStore.subTotal){ //Minimum order value is
+      return error.value = `Der Mindestbestellwert beträgt ${formatNumber(zipcode.zipcode[0].minOrder)} ${currency}`
     }
 
 
     cartStore.zipcodeId = zipcode.zipcode[0].id;
     cartStore.deliveryFee = zipcode.zipcode[0].deliveryFee;
+    formData.deliveryAddress.town = zipcode.zipcode[0].town;
+    cartStore.deliveryData = formData;
     componentStore.setDefaults();
-    router.push({name: "checkout"})
+    router.push({name: "checkout"});
 
   }catch (e) {
-
+    return error.value = "Entschuldigung, etwas ist schief gelaufen. Bitte versuchen Sie es später noch einmal";
   }finally { loading.value = false }
-
 
 }
 
@@ -181,8 +179,6 @@ const validate = async () => {
 
       </div>
 
-
-
       <div class="row">
         <form @submit.prevent="validate">
 
@@ -233,7 +229,7 @@ const validate = async () => {
               <div class="input-group">
                 <div class="input-group-text"><span class="pi pi-map-marker"></span></div>
                 <input type="text" placeholder="Stadtname eingeben" disabled
-                       class="form-control shadow-none" v-model="formData.deliveryAddress.city">
+                       class="form-control shadow-none" v-model="formData.deliveryAddress.town">
               </div>
             </div>
 

@@ -15,27 +15,17 @@ const cartStore = useCartStore();
 const store = useHomeStore();
 const router = useRouter()
 const loading = ref(false);
+const paying = ref(false);
 
 const stripePublicKey = "pk_test_1phpKcUQ5qWMKWm0ah9tdv5S00cuLwizxy";
 
 const error = ref("");
-const formData = reactive({
-  paymentMethod: 'cash', note: "",
-  deliveryAddress: {
-    street: '', houseNumber: '', postCode: '', city: 'Braunschweig',
-    floor: '', phone: ''
-  }
-})
 
+const formData = cartStore.deliveryData;
 
-if (store.user.deliveryAddress && store.user.deliveryAddress.phone){
-  formData.deliveryAddress.street = store.user.deliveryAddress.street;
-  formData.deliveryAddress.houseNumber = store.user.deliveryAddress.houseNumber;
-  formData.deliveryAddress.postCode = store.user.deliveryAddress.postCode;
-  formData.deliveryAddress.floor = store.user.deliveryAddress.floor;
-  formData.deliveryAddress.phone = store.user.deliveryAddress.phone;
+if (!formData){
+  router.back();
 }
-
 
 //As you type
 const formatPhoneNumber = () => {
@@ -49,12 +39,13 @@ const formatPhoneNumber = () => {
 }
 
 
+// console.log(cartStore.deliveryData)
 
 // *********** Pay with cash **************
 const processOrder = async () => {
   try {
 
-    loading.value = true;
+    paying.value = true;
     error.value = "";
     //If phone number is not valid
     if(!isValidPhoneNumberForCountry(formData.deliveryAddress.phone, 'DE')){
@@ -64,9 +55,8 @@ const processOrder = async () => {
     const response = await  axios.post('/orders',
         {
           cart: cartStore.cart,
-          deliveryFee: cartStore.deliveryFee,
-          note: formData.note,
-          deliveryAddress: formData.deliveryAddress,
+          note: cartStore.deliveryData?.note,
+          deliveryAddress: cartStore.deliveryData?.deliveryAddress,
           paymentMethod: "cash"
         },
         {
@@ -80,7 +70,8 @@ const processOrder = async () => {
     if (response.status === 201){
       componentStore.setDefaults();
       cartStore.clearCart();
-      toast.add({severity:'success', detail: '\'Danke schön. Ihre Bestellung wurde zur Bearbeitung eingegangen', life: 4000});
+      router.push({name: "home"});
+      toast.add({severity:'success', detail: 'Danke schön. Ihre Bestellung wurde zur Bearbeitung eingegangen', life: 4000});
     }
 
 
@@ -96,7 +87,7 @@ const processOrder = async () => {
     return toast.add({severity:'warn', detail: 'Entschuldigung, etwas ist schief gelaufen. Bitte versuchen Sie es später noch einmal',
       life: 4000});
   }finally {
-    loading.value = false;
+    paying.value = false;
   }
 
 } // ./process Order
@@ -114,9 +105,10 @@ onMounted(async () => {
         },
         async createOrder() {
 
+
           try {
 
-            //******************************VALIDATION GOES HERE*****************************
+            //****************************** VALIDATION GOES HERE *****************************
 
             const response = await fetch(`${axios.defaults.baseURL}/orders`, {
               method: "POST",
@@ -128,7 +120,8 @@ onMounted(async () => {
               // like product ids and quantities
               body: JSON.stringify({
                 cart: cartStore.cart,
-                deliveryFee: cartStore.deliveryFee,
+                note: cartStore.deliveryData?.note,
+                deliveryAddress: cartStore.deliveryData?.deliveryAddress,
                 paymentMethod: "paypal"
               }),
             });
@@ -163,9 +156,8 @@ onMounted(async () => {
 
               body: JSON.stringify({
                 cart: cartStore.cart,
-                deliveryFee: cartStore.deliveryFee,
-                note: formData.note,
-                deliveryAddress: formData.deliveryAddress,
+                note:  cartStore.deliveryData?.note,
+                deliveryAddress: cartStore.deliveryData?.deliveryAddress,
                 paymentMethod: "paypal"
               }),
 
@@ -194,6 +186,7 @@ onMounted(async () => {
 
               componentStore.setDefaults();
               cartStore.clearCart();
+              router.push({name: "home"});
               toast.add({severity:'success', detail: 'Danke schön. Ihre Bestellung wurde zur Bearbeitung eingegangen', life: 7000});
 
 
@@ -247,10 +240,9 @@ const sendDataToServer = async (paymentMethod, extReference) => {
 
         JSON.stringify({
           cart: cartStore.cart,
-          deliveryFee: cartStore.deliveryFee,
           extReference,
-          note: formData.note,
-          deliveryAddress: formData.deliveryAddress,
+          note:  cartStore.deliveryData.note,
+          deliveryAddress:  cartStore.deliveryData.deliveryAddress,
           paymentMethod
         }),
         {
@@ -288,7 +280,16 @@ const initaiteStripeCcheckout = async () => {
     loading.value = true;
     const stripe = Stripe(stripePublicKey);
 
-    const response = await axios.get("/payment-intent");
+    const response = await axios.post("/payment-intent",
+        JSON.stringify({
+          cart: cartStore.cart,
+          deliveryAddress:  cartStore.deliveryData.deliveryAddress,
+          note:  cartStore.deliveryData.note,
+        }),
+        {
+          headers: { 'Authorization': `Bearer ${store.user.token}`}
+        }
+    );
 
     const options = {
       clientSecret: response.data.clientSecrete,
@@ -312,11 +313,12 @@ const initaiteStripeCcheckout = async () => {
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
 
-
+      paying.value = true;
       //Send purchase order to backend
       const err = await sendDataToServer('cc', response.data.paymentIntentId);
 
       if (err){
+        paying.value = false;
         return toast.add({severity:'error', detail: err, life: 6000});
       }
 
@@ -329,12 +331,14 @@ const initaiteStripeCcheckout = async () => {
         redirect: 'if_required',
       });
 
+      paying.value = false;
 
       if (error) {
         // This point will only be reached if there is an immediate error when
         // confirming the payment. Show error to your customer (for example, payment
         // details incomplete)
         //Delete order from db
+        paying.value = true;
          axios.post(`${axios.defaults.baseURL}/orders/destroy`,
 
             JSON.stringify({
@@ -347,12 +351,14 @@ const initaiteStripeCcheckout = async () => {
             }
         ).then(() => console.log('cleared'))
              .catch(e => console.log('not cleared'))
+             .finally(() =>  paying.value = false)
 
         toast.add({severity:'error', detail: error.message,
           life: 6000});
 
       } else {
 
+        paying.value = false;
         cartStore.clearCart();
         componentStore.setDefaults();
         router.push({name: "home"})
@@ -394,7 +400,7 @@ const initaiteStripeCcheckout = async () => {
                 <span class="text-danger">*</span></small>
               <div class="input-group">
                 <div class="input-group-text"><span class="pi pi-map-marker"></span></div>
-                <input type="text" placeholder="Straßenname eingeben" required
+                <input type="text" placeholder="Straßenname eingeben" required disabled
                        class="form-control shadow-none"
                        v-model.trim="formData.deliveryAddress.street">
               </div>
@@ -406,10 +412,9 @@ const initaiteStripeCcheckout = async () => {
                 <span class="text-danger">*</span></small>
               <div class="input-group">
                 <div class="input-group-text"><span class="pi pi-home"></span></div>
-                <input type="text"  class="form-control shadow-none" required
+                <input type="text"  class="form-control shadow-none" required disabled
                        v-model.trim="formData.deliveryAddress.houseNumber"
-                       placeholder="Hausnummer eingeben"
-                >
+                       placeholder="Hausnummer eingeben">
               </div>
             </div>
 
@@ -419,7 +424,7 @@ const initaiteStripeCcheckout = async () => {
                 <span class="text-danger">*</span></small>
               <div class="input-group">
                 <div class="input-group-text"><span class="pi pi-map-marker"></span></div>
-                <input type="text" placeholder="Postleitzahl eingeben"
+                <input type="text" placeholder="Postleitzahl eingeben" disabled
                        class="form-control shadow-none"  required
                        v-model.trim="formData.deliveryAddress.postCode">
               </div>
@@ -432,7 +437,7 @@ const initaiteStripeCcheckout = async () => {
               <div class="input-group">
                 <div class="input-group-text"><span class="pi pi-map-marker"></span></div>
                 <input type="text" placeholder="Stadtname eingeben" disabled
-                       class="form-control shadow-none" v-model="formData.deliveryAddress.city">
+                       class="form-control shadow-none" v-model="formData.deliveryAddress.town">
               </div>
             </div>
 
@@ -441,7 +446,7 @@ const initaiteStripeCcheckout = async () => {
               <small class="fw-bold float-start">Etage (freiwillig)</small>
               <div class="input-group">
                 <div class="input-group-text"><span class="pi pi-map-marker"></span></div>
-                <input type="text" placeholder="Etagennummer eingeben"
+                <input type="text" placeholder="Etagennummer eingeben" disabled
                        class="form-control shadow-none" v-model.trim="formData.deliveryAddress.floor">
               </div>
             </div>
@@ -452,7 +457,7 @@ const initaiteStripeCcheckout = async () => {
                 <span class="text-danger">*</span></small>
               <div class="input-group">
                 <div class="input-group-text">+49</div>
-                <input type="text" placeholder="Telefonnummer" required
+                <input type="text" placeholder="Telefonnummer" required disabled
                        class="form-control shadow-none" v-model="formData.deliveryAddress.phone"
                        @input="formatPhoneNumber">
               </div>
@@ -464,11 +469,10 @@ const initaiteStripeCcheckout = async () => {
               <small class="fw-bold float-start">Anmerkung hinzufügen (freiwillig)</small>
               <div class="input-group">
                 <div class="input-group-text"><span class="pi pi-map-marker"></span></div>
-                <input type="text" placeholder="Anmerkung hinzufügen"
+                <input type="text" placeholder="Anmerkung hinzufügen" disabled
                        class="form-control shadow-none" v-model.trim="formData.note">
               </div>
             </div>
-
 
           </div>
 
@@ -532,11 +536,12 @@ const initaiteStripeCcheckout = async () => {
           <div class="row justify-content-center">
             <div class="col-md-8">
 
-              <Button label="Barzahlung" :loading="loading" type="button" @click="processOrder"
+              <Button label="Barzahlung" :disabled="paying"
+                      :loading="loading" type="button" @click="processOrder"
                       class="p-button p-button-success p-button-rounde w-100 my-3 px-4 py-2"/>
               <br>
 
-              <div id="paypal-button-container"></div>
+              <div id="paypal-button-container" v-if="!paying"></div>
               <br>
 
               <div class="text-center my-2" v-if="!loading">
@@ -551,7 +556,8 @@ const initaiteStripeCcheckout = async () => {
               <!-- Elements will create form elements here -->
             </div>
             <div class="text-center">
-              <button id="submit" type="submit" class="btn btn-primary my-3" v-if="!loading">
+              <button id="submit" type="submit" class="btn btn-primary my-3" v-if="!loading" :disabled="paying">
+               <span v-if="paying" class="spinner-border spinner-border-sm"></span>
                 Bezahlen ({{ formatNumber(cartStore.total) }} {{ currency }})
               </button>
             </div>
