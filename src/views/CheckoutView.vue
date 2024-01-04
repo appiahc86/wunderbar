@@ -16,6 +16,7 @@ const store = useHomeStore();
 const router = useRouter()
 const loading = ref(false);
 const paying = ref(false);
+const confirmDialog = ref();
 
 const stripePublicKey = "pk_test_1phpKcUQ5qWMKWm0ah9tdv5S00cuLwizxy";
 
@@ -45,6 +46,7 @@ const formatPhoneNumber = () => {
 const processOrder = async () => {
   try {
 
+    confirmDialog.value.close();
     paying.value = true;
     error.value = "";
     //If phone number is not valid
@@ -537,11 +539,11 @@ const initaiteStripeCcheckout = async () => {
             <div class="col-md-8">
 
               <Button label="Barzahlung" :disabled="paying"
-                      :loading="loading" type="button" @click="processOrder"
+                      :loading="loading" type="button" @click="confirmDialog.showModal()"
                       class="p-button p-button-success p-button-rounde w-100 my-3 px-4 py-2"/>
               <br>
 
-              <div id="paypal-button-container" v-if="!paying"></div>
+              <div id="paypal-button-container" v-show="!paying"></div>
               <br>
 
               <div class="text-center my-2" v-if="!loading">
@@ -566,6 +568,17 @@ const initaiteStripeCcheckout = async () => {
         </div>
       </div>
     </div>
+
+
+      <!--    Confirm Dialog  -->
+    <dialog ref="confirmDialog" style="border: none;" class="p-5">
+    <h6 class="text-center my3">Barzahlung bestätigen?</h6>
+    <div class="text-center">
+      <button class="btn btn-secondary btn-sm mx-3" @click="confirmDialog.close()">Stornieren</button>
+      <button class="btn btn-primary btn-sm" @click="processOrder">Fortfahren</button>
+    </div>
+    </dialog>
+
 
   </div>
 

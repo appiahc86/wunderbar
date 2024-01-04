@@ -11,6 +11,7 @@ import Register from "@/components/auth/Register.vue";
 import {useComponentStore} from "@/store/componentStore";
 import {useHomeStore} from "@/store/home";
 import PasswordReset from "@/components/auth/PasswordReset.vue";
+import EmailVerification from "@/components/auth/EmailVerification.vue";
 import UserProfile from "@/components/user/UserProfile.vue";
 import Orders from "@/components/orders/Orders.vue";
 
@@ -131,7 +132,18 @@ onBeforeRouteLeave(()=> {
     </div>
   </Dialog>
 
-<!--  Password Reset Dialog-->
+<!--  Email Verification Dialog-->
+  <Dialog v-model:visible="componentStore.emailVerificationDialog" :style="{ width: '50vw' }"
+          :header="`Bitte geben Sie den Bestätigungscode ein, der an gesendet wurde ${store.verificationEmail}`"
+          :breakpoints="{ '960px': '75vw', '641px': '100vw' }" position="center" :modal="true">
+    <div class="container-fluid container-lg">
+      <div class="row">
+        <EmailVerification />
+      </div>
+    </div>
+  </Dialog>
+
+  <!--  Password Reset Dialog-->
   <Dialog v-model:visible="componentStore.passwordResetDialog" header=" " :style="{ width: '50vw' }"
           :breakpoints="{ '960px': '75vw', '641px': '100vw' }" position="center" :modal="true">
     <div class="container-fluid container-lg">

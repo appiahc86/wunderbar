@@ -13,9 +13,6 @@ const regData = reactive({
   name: '', email: '', password: '', confirmPassword: ''
 })
 
-const resetRegData = () => {
-  regData.name = ''; regData.email = ''; regData.password = ''; regData.confirmPassword = '';
-}
 
 const register = async () => {
 
@@ -46,15 +43,9 @@ const register = async () => {
     )
 
     if (response.status === 201) {
-      componentStore.authDialog = false;
-      const payload = {
-        name: regData.name,
-        email: regData.email,
-        token: response.data.token
-      }
-      store.setUser(payload);
-      resetRegData()
-      return toast.add({severity:'success', detail: 'Erfolg', life: 4000});
+      store.verificationEmail = regData.email.toLowerCase();
+      componentStore.setDefaults();
+      componentStore.emailVerificationDialog = true;
     }
 
 

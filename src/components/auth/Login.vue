@@ -29,8 +29,6 @@ const login = async () => {
     if (!loginData.password.trim())  return error.value = "Bitte Passwort eingeben";
 
 
-
-
     //Send Data To Server
     const response = await  axios.post(
         '/users/auth/login',
@@ -40,6 +38,14 @@ const login = async () => {
         })
     )
 
+    //If user is not verified
+    if (response.status === 206) {
+      store.verificationEmail = loginData.email;
+      componentStore.setDefaults();
+      componentStore.emailVerificationDialog = true;
+    }
+
+    //Successful login
     if (response.status === 200) {
 
       const payload = {
@@ -99,7 +105,7 @@ const openPasswordResetDialog = () => {
     </p>
 
     <div class="text-center">
-      <Button label="Anmelden" type="submit" :loading="loading"
+      <Button label="Einloggen" type="submit" :loading="loading"
               class="p-button  p-button-rounded my-4 px-4 py-2"
               icon="pi pi-lock-open"/>
     </div>

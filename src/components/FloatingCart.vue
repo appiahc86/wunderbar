@@ -115,7 +115,6 @@ const validate = async () => {
 
 }
 
-
 </script>
 
 <template>

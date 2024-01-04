@@ -14,7 +14,8 @@ export const useHomeStore = defineStore('homeStore', {
         return {
             user: {},
             menu: [],
-            menuLoading: false
+            menuLoading: false,
+            verificationEmail: ''
          }
     },
 

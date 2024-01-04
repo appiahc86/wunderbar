@@ -17,6 +17,7 @@ export const useComponentStore = defineStore('componentStore', {
             passwordResetDialog: false,
             userProfileDialog: false,
             ordersDialog: false,
+            emailVerificationDialog: false,
         }
     },
 
@@ -35,9 +36,7 @@ export const useComponentStore = defineStore('componentStore', {
             this.passwordResetDialog = false;
             this.userProfileDialog = false;
             this.ordersDialog = false;
+            this.emailVerificationDialog = false;
             }
-
-
     }
-
 })
