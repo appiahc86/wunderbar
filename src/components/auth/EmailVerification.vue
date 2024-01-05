@@ -11,6 +11,11 @@ const loading = ref(false);
 const error = ref("");
 const verificationCode = ref("");
 
+
+if (!store.verificationEmail){
+  componentStore.setDefaults();
+}
+
 //Verify Email
 const verify = async () => {
   try {
