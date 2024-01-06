@@ -85,8 +85,6 @@ const updateUser = async () => {
 <div class="">
 
         <form @submit.prevent="updateUser">
-          <div class="text-danger text-center" v-if="error">
-            <small>{{ error }}</small></div>
 
           <small>Name</small>
           <div class="input-group mb-3">
@@ -177,6 +175,8 @@ const updateUser = async () => {
 
 </div><!-- // ./row  -->
 
+          <div class="text-danger text-center" v-if="error">
+            <small>{{ error }}</small></div>
 
           <div class="text-center">
             <Button label="Einreichen" type="submit" :loading="loading"
