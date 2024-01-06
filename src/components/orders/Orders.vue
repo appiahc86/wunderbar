@@ -221,6 +221,7 @@ const getStatus = (payload) => {
             Hausnummer: {{ orderDetails[0].deliveryAddress.houseNumber }}<br>
             Postleitzahl: {{ orderDetails[0].deliveryAddress.postCode }} <br>
             Stadt: {{ orderDetails[0].deliveryAddress.town }} <br>
+            Etage: {{ orderDetails[0].deliveryAddress.floor }} <br>
             Telefonnummer: {{ orderDetails[0].deliveryAddress.phone }} <br>
             Notiz: {{ orderDetails[0].note }} <br>
 

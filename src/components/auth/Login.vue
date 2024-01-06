@@ -87,7 +87,7 @@ const openPasswordResetDialog = () => {
 <template>
 <div class="">
   <form @submit.prevent="login">
-    <div class="text-danger text-center" v-if="error"><small>{{ error }}</small></div>
+
     <div class="input-group mb-3">
       <div class="input-group-text"><span class="pi pi-envelope"></span></div>
       <input type="email" class="form-control shadow-none"
@@ -103,6 +103,8 @@ const openPasswordResetDialog = () => {
       <span class="text-primary" @click="openPasswordResetDialog" style="cursor: pointer;">
         klicken Sie hier</span>
     </p>
+
+    <div class="text-danger text-center" v-if="error"><small>{{ error }}</small></div>
 
     <div class="text-center">
       <Button label="Einloggen" type="submit" :loading="loading"
