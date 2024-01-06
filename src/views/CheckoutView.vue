@@ -402,8 +402,7 @@ const initaiteStripeCcheckout = async () => {
                 <span class="text-danger">*</span></small>
               <div class="input-group">
                 <div class="input-group-text"><span class="pi pi-map-marker"></span></div>
-                <input type="text" placeholder="Straßenname eingeben" required disabled
-                       class="form-control shadow-none"
+                <input type="text" required disabled class="form-control shadow-none"
                        v-model.trim="formData.deliveryAddress.street">
               </div>
             </div>
@@ -414,9 +413,8 @@ const initaiteStripeCcheckout = async () => {
                 <span class="text-danger">*</span></small>
               <div class="input-group">
                 <div class="input-group-text"><span class="pi pi-home"></span></div>
-                <input type="text"  class="form-control shadow-none" required disabled
-                       v-model.trim="formData.deliveryAddress.houseNumber"
-                       placeholder="Hausnummer eingeben">
+                <input type="text" class="form-control shadow-none" required disabled
+                       v-model.trim="formData.deliveryAddress.houseNumber">
               </div>
             </div>
 
@@ -426,7 +424,7 @@ const initaiteStripeCcheckout = async () => {
                 <span class="text-danger">*</span></small>
               <div class="input-group">
                 <div class="input-group-text"><span class="pi pi-map-marker"></span></div>
-                <input type="text" placeholder="Postleitzahl eingeben" disabled
+                <input type="text" disabled
                        class="form-control shadow-none"  required
                        v-model.trim="formData.deliveryAddress.postCode">
               </div>
@@ -438,17 +436,17 @@ const initaiteStripeCcheckout = async () => {
                 <span class="text-danger">*</span></small>
               <div class="input-group">
                 <div class="input-group-text"><span class="pi pi-map-marker"></span></div>
-                <input type="text" placeholder="Stadtname eingeben" disabled
+                <input type="text" disabled
                        class="form-control shadow-none" v-model="formData.deliveryAddress.town">
               </div>
             </div>
 
             <!--Floor-->
             <div class="col-lg-6 mb-3">
-              <small class="fw-bold float-start">Etage (freiwillig)</small>
+              <small class="fw-bold float-start">Etage</small>
               <div class="input-group">
                 <div class="input-group-text"><span class="pi pi-map-marker"></span></div>
-                <input type="text" placeholder="Etagennummer eingeben" disabled
+                <input type="text" disabled
                        class="form-control shadow-none" v-model.trim="formData.deliveryAddress.floor">
               </div>
             </div>
@@ -459,7 +457,7 @@ const initaiteStripeCcheckout = async () => {
                 <span class="text-danger">*</span></small>
               <div class="input-group">
                 <div class="input-group-text">+49</div>
-                <input type="text" placeholder="Telefonnummer" required disabled
+                <input type="text" required disabled
                        class="form-control shadow-none" v-model="formData.deliveryAddress.phone"
                        @input="formatPhoneNumber">
               </div>
@@ -471,7 +469,7 @@ const initaiteStripeCcheckout = async () => {
               <small class="fw-bold float-start">Anmerkung hinzufügen (freiwillig)</small>
               <div class="input-group">
                 <div class="input-group-text"><span class="pi pi-map-marker"></span></div>
-                <input type="text" placeholder="Anmerkung hinzufügen" disabled
+                <input type="text" disabled
                        class="form-control shadow-none" v-model.trim="formData.note">
               </div>
             </div>

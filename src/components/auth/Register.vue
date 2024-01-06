@@ -66,8 +66,7 @@ const register = async () => {
 <template>
   <div class="">
     <form @submit.prevent="register">
-      <div class="text-danger text-center" v-if="error">
-        <small>{{ error }}</small></div>
+
       <div class="input-group mb-3">
         <div class="input-group-text"><span class="pi pi-user"></span></div>
         <input type="text" class="form-control shadow-none" placeholder="Name"
@@ -99,6 +98,9 @@ const register = async () => {
           ein Kleinbuchstabe und eine Ziffer.
         </small>
       </p>
+
+      <div class="text-danger text-center" v-if="error">
+        <small>{{ error }}</small></div>
 
       <div class="text-center">
         <Button label="Einreichen" type="submit" :loading="loading"
