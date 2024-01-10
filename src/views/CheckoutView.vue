@@ -492,7 +492,7 @@ const initaiteStripeCcheckout = async () => {
               <div class="col">
                 <span class="text-capitalize">{{ item.name }} </span><br>
                 <small class="text-muted" v-if="item.selectedChoice">{{ item.selectedChoice }}</small>
-                <small class="text-ligt" v-else>with extra neat gfdresdv hfytdtrvvgtffhhgfhg</small>
+                <small class="text-light" v-else>.</small>
               </div>
               <div class="col" style="text-align: right;">
                 {{ formatNumber(item.price * item.qty) }} {{ currency }}
