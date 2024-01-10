@@ -10,6 +10,8 @@ import ToastService from 'primevue/toastservice';
 const pinia = createPinia();
 pinia.use(piniaPluginPersistedstate);
 
+import VueClientRecaptcha from 'vue-client-recaptcha';
+
 
 // import 'primevue/resources/themes/rhea/theme.css';
 // import 'primevue/resources/themes/saga-purple/theme.css';
@@ -22,4 +24,5 @@ app.use(PrimeVue);
 app.use(ToastService);
 app.use(router);
 app.use(pinia);
+app.component("VueClientRecaptcha", VueClientRecaptcha);
 app.mount('#app');

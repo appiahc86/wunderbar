@@ -6,11 +6,11 @@ import {useHomeStore} from "@/store/home";
 import {useComponentStore} from "@/store/componentStore";
 
 const store = useHomeStore();
-const componentStore = useComponentStore()
+const componentStore = useComponentStore();
 const loading = ref(false);
 const error = ref('');
 
-const loginData = reactive({email: '', password: ''})
+const loginData = reactive({email: '', password: ''});
 
 const resetLoginData = () => {
   loginData.email = ''; loginData.password = '';
@@ -82,6 +82,26 @@ const openPasswordResetDialog = () => {
   componentStore.passwordResetDialog = true;
 }
 
+
+
+
+/* pass value to captcha  */
+const inputValue = ref(null);
+const captchaCode = ref('');
+const isValidCaptchaCode = ref(false);
+
+const getCaptchaCode = (value) => {
+  /* you can access captcha code */
+  captchaCode.value = value.toLowerCase();
+};
+const checkValidCaptcha = (value) => {
+  /* expected return boolean if your value and captcha code are same return True otherwise return False */
+  if (inputValue.value && captchaCode.value){
+    isValidCaptchaCode.value = (inputValue.value.toLowerCase() === captchaCode.value.toLowerCase());
+  }else isValidCaptchaCode.value = false;
+
+};
+
 </script>
 
 <template>
@@ -104,17 +124,29 @@ const openPasswordResetDialog = () => {
         klicken Sie hier</span>
     </p>
 
+
+    <div class="sample-captcha text-center">
+      <input type="text" v-model="inputValue" class="shadow-none mb-1" autocomplete="off"/>
+
+      <VueClientRecaptcha
+          :showCapitalCaseLetters="false"
+          :value="inputValue"
+          @getCode="getCaptchaCode"
+          @isValid="checkValidCaptcha"
+      />
+    </div>
+
     <div class="text-danger text-center" v-if="error"><small>{{ error }}</small></div>
 
     <div class="text-center">
       <Button label="Einloggen" type="submit" :loading="loading"
               class="p-button  p-button-rounded my-4 px-4 py-2"
-              icon="pi pi-lock-open"/>
+              icon="pi pi-lock-open" :disabled="!isValidCaptchaCode"/>
     </div>
   </form>
 </div>
 </template>
 
 <style scoped>
-
+@import url("/node_modules/vue-client-recaptcha/dist/style.css");
 </style>

@@ -10,6 +10,7 @@ const componentStore = useComponentStore();
 const loading = ref(false);
 const error = ref("");
 
+
 const formData = reactive({
   name: store.user.name,
   email: store.user.email,
@@ -19,10 +20,9 @@ const formData = reactive({
            postCode: '',
            town: '',
            floor: '',
-           phone: store.user.phone
+           phone: ''
   }
 })
-
 
 
 //onMounted Hook
@@ -60,11 +60,9 @@ const updateUser = async () => {
 
     if (response.status === 200) {
       store.user.name = formData.name;
-      store.user.phone = formData.phone;
-      store.user.deliveryAddress = response.data.deliveryAddress;
+      store.user.deliveryAddress = response?.data?.deliveryAddress;
       componentStore.setDefaults();
       return toast.add({severity:'success', detail: 'Erfolg', life: 4000});
-
     }
 
   }catch (e) {
