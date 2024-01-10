@@ -81,6 +81,7 @@ const viewOrderDetails = async (id) => {
   }
 }
 
+
 //Get status in German
 const getStatus = (payload) => {
   let returnValue = "warten"
@@ -167,7 +168,6 @@ const getStatus = (payload) => {
       </div>
     </div>
   </div>
-
 
 
 <!-- order details dialog-->

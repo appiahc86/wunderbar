@@ -61,6 +61,25 @@ const register = async () => {
 
 }
 
+
+
+/* pass value to captcha  */
+const inputValue = ref(null);
+const captchaCode = ref('');
+const isValidCaptchaCode = ref(false);
+
+const getCaptchaCode = (value) => {
+  /* you can access captcha code */
+  captchaCode.value = value.toLowerCase();
+};
+const checkValidCaptcha = (value) => {
+  /* expected return boolean if your value and captcha code are same return True otherwise return False */
+  if (inputValue.value && captchaCode.value){
+    isValidCaptchaCode.value = (inputValue.value.toLowerCase() === captchaCode.value.toLowerCase());
+  }else isValidCaptchaCode.value = false;
+
+};
+
 </script>
 
 <template>
@@ -99,18 +118,30 @@ const register = async () => {
         </small>
       </p>
 
+
+      <div class="sample-captcha text-center">
+        <input type="text" v-model="inputValue" class="shadow-none mb-1" autocomplete="off"/>
+
+        <VueClientRecaptcha
+            :showCapitalCaseLetters="false"
+            :value="inputValue"
+            @getCode="getCaptchaCode"
+            @isValid="checkValidCaptcha"
+        />
+      </div>
+
       <div class="text-danger text-center" v-if="error">
         <small>{{ error }}</small></div>
 
       <div class="text-center">
         <Button label="Einreichen" type="submit" :loading="loading"
                 class="p-button  p-button-rounded my-4 px-4 py-2"
-                />
+                :disabled="!isValidCaptchaCode"/>
       </div>
     </form>
   </div>
 </template>
 
 <style scoped>
-
+@import url("/node_modules/vue-client-recaptcha/dist/style.css");
 </style>
