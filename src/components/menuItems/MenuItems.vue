@@ -128,7 +128,13 @@ const addToCart = () => {
                               @click="showDescription($event, menuItem.description)"></span>
                       </div>
                       <div class="h6 mb-0 fw-bold">
-                        <small class="text-muted" style="font-size: 0.85em;">{{ menuItem.shortDescription }}</small>
+                        <small class="text-muted" style="font-size: 0.85em;" :title="menuItem.shortDescription"
+                               v-if="menuItem.shortDescription.length > 40">
+                          {{ menuItem.shortDescription.substring(0,40) }}...
+                        </small>
+                        <small class="text-muted" style="font-size: 0.85em;" v-else>
+                          {{ menuItem.shortDescription.substring(0,40) }}
+                        </small>
                       </div>
                     </div>
                     <div class="col-auto">

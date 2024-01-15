@@ -217,13 +217,13 @@ const getStatus = (payload) => {
           <h5 class="mb-2 fw-bold">Lieferdetails</h5>
           <address class="fst-italic">
            <span class="pi pi-map-marker"></span>
-            Straße: {{ orderDetails[0].deliveryAddress.street }}<br>
-            Hausnummer: {{ orderDetails[0].deliveryAddress.houseNumber }}<br>
-            Postleitzahl: {{ orderDetails[0].deliveryAddress.postCode }} <br>
-            Stadt: {{ orderDetails[0].deliveryAddress.town }} <br>
-            Etage: {{ orderDetails[0].deliveryAddress.floor }} <br>
-            Telefonnummer: {{ orderDetails[0].deliveryAddress.phone }} <br>
-            Notiz: {{ orderDetails[0].note }} <br>
+            <b>Straße: </b>{{ orderDetails[0].deliveryAddress.street }}<br>
+            <b>Hausnummer: </b>{{ orderDetails[0].deliveryAddress.houseNumber }}<br>
+            <b>Postleitzahl: </b>{{ orderDetails[0].deliveryAddress.postCode }} <br>
+            <b>Stadt: </b>{{ orderDetails[0].deliveryAddress.town }} <br>
+            <b>Etage: </b>{{ orderDetails[0].deliveryAddress.floor }} <br>
+            <b>Telefonnummer: </b>{{ orderDetails[0].deliveryAddress.phone }} <br>
+            <b>Notiz: </b>{{ orderDetails[0].note }} <br>
 
           </address>
         </div>
@@ -232,21 +232,21 @@ const getStatus = (payload) => {
         <div class="py-4 px-3 mt-3" style="background: #f3f0f0;">
           <h5 class="mb-2 fw-bold">Zusammenfassung</h5>
           <div class="row mb-2">
-            <div class="col">Lieferkosten</div>
-            <div class="col" style="text-align: right;">
-              {{ formatNumber(orderDetails[0].deliveryFee) }} {{ currency }}
-            </div>
-          </div>
-          <div class="row mb-2">
             <div class="col">Produkte</div>
             <div class="col" style="text-align: right;">
               {{ formatNumber(orderDetails[0].total - orderDetails[0].deliveryFee) }} {{ currency }}
             </div>
           </div>
           <div class="row mb-2">
+            <div class="col">Lieferkosten</div>
+            <div class="col" style="text-align: right;">
+              {{ formatNumber(orderDetails[0].deliveryFee) }} {{ currency }}
+            </div>
+          </div>
+          <div class="row mb-2">
             <div class="col"><b>Gesamt</b></div>
             <div class="col" style="text-align: right;">
-              {{ formatNumber(orderDetails[0].total) }} {{ currency }}
+              <b>{{ formatNumber(orderDetails[0].total) }} {{ currency }}</b>
             </div>
           </div>
         </div>

@@ -121,8 +121,14 @@ const addToCart = () => {
     <div class="container-fluid">
       <div class="d-lg-none mb-2 mt-3 card shadow p-2"><Menu/></div>
 
-      <h5 class="fw-bold my-4 text-capitalize text-center">
-        <mark>{{ route.params.slug }}</mark></h5>
+      <div class="fw-bold my-4 text-center" v-if="loading">
+        <Skeleton style="width: 150px;" class="mx-auto"></Skeleton>
+      </div>
+
+      <div class="fw-bold my-4 text-center" v-else>
+        <mark>{{ menuItems[0].menu }}</mark>
+      </div>
+
 
       <div class="row my-3">
 
@@ -141,7 +147,13 @@ const addToCart = () => {
                               @click="showDescription($event, menuItem.description)"></span>
                       </div>
                       <div class="h6 mb-0 fw-bold">
-                        <small class="text-muted" style="font-size: 0.85em;">{{ menuItem.shortDescription }}</small>
+                        <small class="text-muted" style="font-size: 0.85em;" :title="menuItem.shortDescription"
+                               v-if="menuItem.shortDescription.length > 40">
+                          {{ menuItem.shortDescription.substring(0,40) }}...
+                        </small>
+                        <small class="text-muted" style="font-size: 0.85em;" v-else>
+                          {{ menuItem.shortDescription.substring(0,40) }}
+                        </small>
                       </div>
                     </div>
                     <div class="col-auto">
