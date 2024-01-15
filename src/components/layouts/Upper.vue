@@ -11,10 +11,10 @@ import Menu from "@/components/menu/Menu.vue";
         <span class="pi pi-clock"></span>&nbsp;
         <small>Lieferung ab 14:00</small>
 
-        <span class="d-none d-md-inline">
-                   <span class=""> &#10038;</span>
-                <span class=""> &#127949; <small>3.00 €&nbsp;</small></span>
-                </span>
+<!--        <span class="d-none d-md-inline">-->
+<!--                   <span class=""> &#10038;</span>-->
+<!--                <span class=""> &#127949; <small>3.00 €&nbsp;</small></span>-->
+<!--                </span>-->
 
       </p>
 

@@ -577,7 +577,6 @@ const initaiteStripeCcheckout = async () => {
     </div>
     </dialog>
 
-
   </div>
 
 
