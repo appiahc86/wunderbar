@@ -2,12 +2,12 @@
 import Button from "primevue/button";
 import {useCartStore} from "@/store/cart";
 import {currency, formatNumber, isValidPhoneNumberForCountry} from "@/functions";
-import {onMounted, reactive, ref} from "vue";
+import {computed, onMounted, ref} from "vue";
 import {useHomeStore} from "@/store/home";
 import axios from "@/axios";
 import {useComponentStore} from "@/store/componentStore";
 import {AsYouType} from 'libphonenumber-js'
-import {useRouter} from "vue-router";
+import {onBeforeRouteLeave, useRouter} from "vue-router";
 
 
 const componentStore = useComponentStore();
@@ -22,22 +22,23 @@ const stripePublicKey = "pk_test_1phpKcUQ5qWMKWm0ah9tdv5S00cuLwizxy";
 
 const error = ref("");
 
-const formData = cartStore.deliveryData;
 
-if (!formData){
-  router.back();
-}
+if(!!cartStore.deliveryData === false) router.push({name: "home"});
+
+onBeforeRouteLeave(() => {
+  cartStore.deliveryData = null;
+})
 
 //As you type
-const formatPhoneNumber = () => {
-  if (/^[0-9 ]*$/.test(formData.deliveryAddress.phone)){
-
-    const asYouType = new AsYouType('DE')
-    // console.log(asYouType.getNumber().number)
-    formData.deliveryAddress.phone = asYouType.input(formData.deliveryAddress.phone);
-  }else formData.deliveryAddress.phone = "";
-
-}
+// const formatPhoneNumber = () => {
+//   if (/^[0-9 ]*$/.test(cartStore?.deliveryAddress?.phone)){
+//
+//     const asYouType = new AsYouType('DE')
+//     // console.log(asYouType.getNumber().number)
+//     cartStore.deliveryAddress.phone = asYouType.input(cartStore?.deliveryAddress?.phone);
+//   }else cartStore.deliveryAddress.phone = "";
+//
+// }
 
 
 // console.log(cartStore.deliveryData)
@@ -50,9 +51,9 @@ const processOrder = async () => {
     paying.value = true;
     error.value = "";
     //If phone number is not valid
-    if(!isValidPhoneNumberForCountry(formData.deliveryAddress.phone, 'DE')){
-      return error.value = "Bitte geben Sie eine gültige Telefonnummer ein";
-    }
+    // if(!isValidPhoneNumberForCountry(formData.deliveryAddress.phone, 'DE')){
+    //   return error.value = "Bitte geben Sie eine gültige Telefonnummer ein";
+    // }
 
     const response = await  axios.post('/orders',
         {
@@ -63,7 +64,7 @@ const processOrder = async () => {
         },
         {
           headers: {
-            'Authorization': `Bearer ${store.user.token}`
+            'Authorization': store?.user?.token ? `Bearer ${store?.user?.token}` : ""
           }
         }
     )
@@ -99,6 +100,11 @@ const processOrder = async () => {
 //********* Pay with paypal **********
 onMounted(async () => {
 
+  if (!cartStore.deliveryData){
+    router.push({name: "home"});
+  }
+
+
   window.paypal
       .Buttons({
         style: {
@@ -116,7 +122,7 @@ onMounted(async () => {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${store.user.token}`
+                "Authorization": store?.user?.token ? `Bearer ${store?.user?.token}` : ""
               },
               // use the "body" param to optionally pass additional order information
               // like product ids and quantities
@@ -153,7 +159,7 @@ onMounted(async () => {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${store.user.token}`
+                "Authorization": store?.user?.token ? `Bearer ${store?.user?.token}` : ""
               },
 
               body: JSON.stringify({
@@ -249,7 +255,7 @@ const sendDataToServer = async (paymentMethod, extReference) => {
         }),
         {
           headers: {
-            "Authorization": `Bearer ${store.user.token}`
+            "Authorization": store?.user?.token ? `Bearer ${store?.user?.token}` : ""
           },
         }
     )
@@ -257,7 +263,7 @@ const sendDataToServer = async (paymentMethod, extReference) => {
     if (response.status === 201){
       return err
     }else {
-      err = "Error Occured";
+      err = "Error Occurred";
       return err;
     }
   }catch (e) {
@@ -280,18 +286,23 @@ const sendDataToServer = async (paymentMethod, extReference) => {
 const initaiteStripeCcheckout = async () => {
   try {
     loading.value = true;
+
     const stripe = Stripe(stripePublicKey);
 
     const response = await axios.post("/payment-intent",
         JSON.stringify({
           cart: cartStore.cart,
           deliveryAddress:  cartStore.deliveryData.deliveryAddress,
-          note:  cartStore.deliveryData.note,
+          note: cartStore.deliveryData.note,
         }),
         {
-          headers: { 'Authorization': `Bearer ${store.user.token}`}
+          headers: {
+            "Authorization": store?.user?.token ? `Bearer ${store?.user?.token}` : ""
+          }
         }
     );
+
+    console.log("waiting")
 
     const options = {
       clientSecret: response.data.clientSecrete,
@@ -348,7 +359,7 @@ const initaiteStripeCcheckout = async () => {
             }),
             {
               headers: {
-                "Authorization": `Bearer ${store.user.token}`
+                "Authorization": store?.user?.token ? `Bearer ${store?.user?.token}` : ""
               },
             }
         ).then(() => console.log('cleared'))
@@ -364,8 +375,7 @@ const initaiteStripeCcheckout = async () => {
         cartStore.clearCart();
         componentStore.setDefaults();
         router.push({name: "home"})
-        return toast.add({severity:'success', detail: 'Success',
-          life: 4000});
+        toast.add({severity:'success', detail: 'Danke schön. Ihre Bestellung wurde zur Bearbeitung eingegangen', life: 7000});
         // Your customer will be redirected to your `return_url`. For some payment
         // methods like iDEAL, your customer will be redirected to an intermediate
         // site first to authorize the payment, then redirected to the `return_url`.
@@ -403,7 +413,7 @@ const initaiteStripeCcheckout = async () => {
               <div class="input-group">
                 <div class="input-group-text"><span class="pi pi-map-marker"></span></div>
                 <input type="text" required disabled class="form-control shadow-none"
-                       v-model.trim="formData.deliveryAddress.street">
+                       :value="cartStore?.deliveryData?.deliveryAddress?.street">
               </div>
             </div>
 
@@ -414,7 +424,7 @@ const initaiteStripeCcheckout = async () => {
               <div class="input-group">
                 <div class="input-group-text"><span class="pi pi-home"></span></div>
                 <input type="text" class="form-control shadow-none" required disabled
-                       v-model.trim="formData.deliveryAddress.houseNumber">
+                       :value="cartStore?.deliveryData?.deliveryAddress?.houseNumber">
               </div>
             </div>
 
@@ -426,7 +436,7 @@ const initaiteStripeCcheckout = async () => {
                 <div class="input-group-text"><span class="pi pi-map-marker"></span></div>
                 <input type="text" disabled
                        class="form-control shadow-none"  required
-                       v-model.trim="formData.deliveryAddress.postCode">
+                       :value="cartStore?.deliveryData?.deliveryAddress?.postCode">
               </div>
             </div>
 
@@ -437,7 +447,7 @@ const initaiteStripeCcheckout = async () => {
               <div class="input-group">
                 <div class="input-group-text"><span class="pi pi-map-marker"></span></div>
                 <input type="text" disabled
-                       class="form-control shadow-none" v-model="formData.deliveryAddress.town">
+                       class="form-control shadow-none" :value="cartStore?.deliveryData?.deliveryAddress?.town">
               </div>
             </div>
 
@@ -447,7 +457,7 @@ const initaiteStripeCcheckout = async () => {
               <div class="input-group">
                 <div class="input-group-text"><span class="pi pi-map-marker"></span></div>
                 <input type="text" disabled
-                       class="form-control shadow-none" v-model.trim="formData.deliveryAddress.floor">
+                       class="form-control shadow-none" :value="cartStore?.deliveryData?.deliveryAddress?.floor">
               </div>
             </div>
 
@@ -458,8 +468,7 @@ const initaiteStripeCcheckout = async () => {
               <div class="input-group">
                 <div class="input-group-text">+49</div>
                 <input type="text" required disabled
-                       class="form-control shadow-none" v-model="formData.deliveryAddress.phone"
-                       @input="formatPhoneNumber">
+                       class="form-control shadow-none" :value="cartStore?.deliveryData?.deliveryAddress?.phone">
               </div>
             </div>
 
@@ -470,7 +479,7 @@ const initaiteStripeCcheckout = async () => {
               <div class="input-group">
                 <div class="input-group-text"><span class="pi pi-map-marker"></span></div>
                 <input type="text" disabled
-                       class="form-control shadow-none" v-model.trim="formData.note">
+                       class="form-control shadow-none" :value="cartStore?.deliveryData?.deliveryAddress?.note">
               </div>
             </div>
 
@@ -538,7 +547,7 @@ const initaiteStripeCcheckout = async () => {
 
               <Button label="Barzahlung" :disabled="paying"
                       :loading="loading" type="button" @click="confirmDialog.showModal()"
-                      class="p-button p-button-success p-button-rounde w-100 my-3 px-4 py-2"/>
+                      class="p-button p-button-success w-100 my-3 px-4 py-2"/>
               <br>
 
               <div id="paypal-button-container" v-show="!paying"></div>

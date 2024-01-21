@@ -28,10 +28,7 @@ const getZipcode = async () => {
   try {
 
     const response = await  axios.post('/zipcode',
-        JSON.stringify({zipcode: formData.deliveryAddress.postCode}),
-        {
-          headers: { 'Authorization': `Bearer ${store.user.token}`}
-        }
+        JSON.stringify({zipcode: formData.deliveryAddress.postCode})
     )
 
     if (response.status === 200){
@@ -77,10 +74,6 @@ if (store?.user?.deliveryAddress?.phone){
 const validate = async () => {
   try {
 
-    if (!store.isLoggedIn){
-      componentStore.setDefaults();
-      componentStore.authDialog = true;
-    }
 
     loading.value = true;
     error.value = "";
@@ -159,10 +152,10 @@ const validate = async () => {
                 <td class="float-end">{{ formatNumber(cartStore.subTotal) }} {{ currency }}</td> <!-- Delivery cost -->
               </tr>
 
-              <tr>
-                <td>Lieferkosten</td> <!-- Delivery cost -->
-                <td class="float-end">{{ formatNumber(cartStore.deliveryFee) }} {{ currency }}</td>
-              </tr>
+<!--              <tr>-->
+<!--                <td>Lieferkosten</td> &lt;!&ndash; Delivery cost &ndash;&gt;-->
+<!--                <td class="float-end">{{ formatNumber(cartStore.deliveryFee) }} {{ currency }}</td>-->
+<!--              </tr>-->
 
               <tr>
                 <th>Gesamt</th> <!-- Total -->
@@ -222,15 +215,15 @@ const validate = async () => {
             </div>
 
             <!--City-->
-            <div class="col-lg-6 mb-3">
-              <small class="fw-bold float-start">Stadt
-                <span class="text-danger">*</span></small>
-              <div class="input-group">
-                <div class="input-group-text"><span class="pi pi-map-marker"></span></div>
-                <input type="text" placeholder="Stadtname eingeben" disabled
-                       class="form-control shadow-none" v-model="formData.deliveryAddress.town">
-              </div>
-            </div>
+<!--            <div class="col-lg-6 mb-3">-->
+<!--              <small class="fw-bold float-start">Stadt-->
+<!--                <span class="text-danger">*</span></small>-->
+<!--              <div class="input-group">-->
+<!--                <div class="input-group-text"><span class="pi pi-map-marker"></span></div>-->
+<!--                <input type="text" placeholder="Stadtname eingeben" disabled-->
+<!--                       class="form-control shadow-none" v-model="formData.deliveryAddress.town">-->
+<!--              </div>-->
+<!--            </div>-->
 
             <!--Floor-->
             <div class="col-lg-6 mb-3">

@@ -11,7 +11,6 @@ const paymentRouter = [
         path: '/payments/checkout',
         name: 'checkout',
         component: CheckoutView,
-        meta: {requiresAuth: true}
     },
 
 ]
