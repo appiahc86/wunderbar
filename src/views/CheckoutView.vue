@@ -1,13 +1,12 @@
 <script setup>
 import Button from "primevue/button";
 import {useCartStore} from "@/store/cart";
-import {currency, formatNumber, isValidPhoneNumberForCountry} from "@/functions";
-import {computed, onMounted, ref} from "vue";
+import {currency, formatNumber} from "@/functions";
+import {onMounted, ref} from "vue";
 import {useHomeStore} from "@/store/home";
 import axios from "@/axios";
 import {useComponentStore} from "@/store/componentStore";
-import {AsYouType} from 'libphonenumber-js'
-import {onBeforeRouteLeave, useRouter} from "vue-router";
+import {useRouter} from "vue-router";
 
 
 const componentStore = useComponentStore();
@@ -15,6 +14,7 @@ const cartStore = useCartStore();
 const store = useHomeStore();
 const router = useRouter()
 const loading = ref(false);
+const ccActivated = ref(false);
 const paying = ref(false);
 const confirmDialog = ref();
 
@@ -23,25 +23,11 @@ const stripePublicKey = "pk_test_1phpKcUQ5qWMKWm0ah9tdv5S00cuLwizxy";
 const error = ref("");
 
 
-if(!!cartStore.deliveryData === false) router.push({name: "home"});
-
-onBeforeRouteLeave(() => {
-  cartStore.deliveryData = null;
-})
-
-//As you type
-// const formatPhoneNumber = () => {
-//   if (/^[0-9 ]*$/.test(cartStore?.deliveryAddress?.phone)){
-//
-//     const asYouType = new AsYouType('DE')
-//     // console.log(asYouType.getNumber().number)
-//     cartStore.deliveryAddress.phone = asYouType.input(cartStore?.deliveryAddress?.phone);
-//   }else cartStore.deliveryAddress.phone = "";
-//
-// }
+if(!cartStore.deliveryData.deliveryAddress.postCode && store.smsVerified) {
+  router.push({name: "home"});
+}
 
 
-// console.log(cartStore.deliveryData)
 
 // *********** Pay with cash **************
 const processOrder = async () => {
@@ -50,10 +36,6 @@ const processOrder = async () => {
     confirmDialog.value.close();
     paying.value = true;
     error.value = "";
-    //If phone number is not valid
-    // if(!isValidPhoneNumberForCountry(formData.deliveryAddress.phone, 'DE')){
-    //   return error.value = "Bitte geben Sie eine gültige Telefonnummer ein";
-    // }
 
     const response = await  axios.post('/orders',
         {
@@ -100,7 +82,7 @@ const processOrder = async () => {
 //********* Pay with paypal **********
 onMounted(async () => {
 
-  if (!cartStore.deliveryData){
+  if (!cartStore.deliveryData.deliveryAddress.postCode && !store.smsVerified){
     router.push({name: "home"});
   }
 
@@ -191,27 +173,14 @@ onMounted(async () => {
             } else {
               // (3) Successful transaction -> Show confirmation or thank you message
               // Or go to another URL:  actions.redirect('thank_you.html');
-
               componentStore.setDefaults();
               cartStore.clearCart();
               router.push({name: "home"});
               toast.add({severity:'success', detail: 'Danke schön. Ihre Bestellung wurde zur Bearbeitung eingegangen', life: 7000});
 
-
-              // const transaction =
-              //     orderData?.purchase_units?.[0]?.payments?.captures?.[0] ||
-              //     orderData?.purchase_units?.[0]?.payments?.authorizations?.[0];
-              // resultMessage(
-              //     `Transaction ${transaction.status}: ${transaction.id}<br><br>See console for all available details`,
-              // );
-              // console.log(
-              //     "Capture result",
-              //     orderData,
-              //     JSON.stringify(orderData.status, null, 2)
-              // );
             }
           } catch (error) {
-            // console.error(error);
+            console.clear();
             toast.add({severity:'error', detail: 'Leider konnte Ihre Transaktion nicht verarbeitet werden', life: 6000});
             // resultMessage(
             //     `Sorry, your transaction could not be processed...<br><br>${error}`,
@@ -221,19 +190,16 @@ onMounted(async () => {
 
         onCancel: function (data) {
           // Show a cancel page or return to cart
-          console.clear()
+          console.clear();
+        },
+
+        onError: function (e){
+          console.clear();
         },
 
       })
       .render("#paypal-button-container");
 
-// Example function to show a result to the user. Your site's UI library can be used instead.
-//   function resultMessage(message) {
-//     const container = document.querySelector("#result-message");
-//     container.innerHTML = message;
-//   }
-
-  await initaiteStripeCcheckout();
 
 }) // ./OnMounted
 
@@ -302,7 +268,7 @@ const initaiteStripeCcheckout = async () => {
         }
     );
 
-    console.log("waiting")
+
 
     const options = {
       clientSecret: response.data.clientSecrete,
@@ -320,6 +286,7 @@ const initaiteStripeCcheckout = async () => {
     paymentElement.mount('#payment-element');
 
     loading.value = false;
+    ccActivated.value = true;
 
     const form = document.getElementById('payment-form');
 
@@ -373,7 +340,6 @@ const initaiteStripeCcheckout = async () => {
 
         paying.value = false;
         cartStore.clearCart();
-        componentStore.setDefaults();
         router.push({name: "home"})
         toast.add({severity:'success', detail: 'Danke schön. Ihre Bestellung wurde zur Bearbeitung eingegangen', life: 7000});
         // Your customer will be redirected to your `return_url`. For some payment
@@ -479,7 +445,7 @@ const initaiteStripeCcheckout = async () => {
               <div class="input-group">
                 <div class="input-group-text"><span class="pi pi-map-marker"></span></div>
                 <input type="text" disabled
-                       class="form-control shadow-none" :value="cartStore?.deliveryData?.deliveryAddress?.note">
+                       class="form-control shadow-none" :value="cartStore?.deliveryData?.note">
               </div>
             </div>
 
@@ -551,20 +517,23 @@ const initaiteStripeCcheckout = async () => {
               <br>
 
               <div id="paypal-button-container" v-show="!paying"></div>
-              <br>
 
-              <div class="text-center my-2" v-if="!loading">
-                <p>Oder zahlen Sie mit Karte</p>
-              </div>
+              <Button label="Kreditkarte" :disabled="paying" v-if="!ccActivated"
+                      :loading="loading" type="button" @click="initaiteStripeCcheckout"
+                      class="p-button w-100 my-3 px-4 py-2" icon="pi pi-credit-card"/>
+
             </div>
           </div>
 
 
+
+
           <form id="payment-form">
+            <br>
             <div id="payment-element">
               <!-- Elements will create form elements here -->
             </div>
-            <div class="text-center">
+            <div class="text-center" v-if="ccActivated">
               <button id="submit" type="submit" class="btn btn-primary my-3" v-if="!loading" :disabled="paying">
                <span v-if="paying" class="spinner-border spinner-border-sm"></span>
                 Bezahlen ({{ formatNumber(cartStore.total) }} {{ currency }})

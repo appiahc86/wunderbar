@@ -102,9 +102,9 @@ const resendEmailVerificationCode = async () => {
                placeholder="Bestätigungscode" v-model.trim="verificationCode">
       </div>
 
-<!--      <p class="resend-email" >Resend email</p>-->
+
       <p class="resend-email" v-if="!loading"
-         @click="resendEmailVerificationCode">Resend email</p>
+         @click="resendEmailVerificationCode">E-Mail zurücksendenl</p>
 
       <div class="text-center">
         <Button label="Einreichen" type="submit" :loading="loading"

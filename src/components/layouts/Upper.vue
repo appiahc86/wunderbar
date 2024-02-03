@@ -9,7 +9,7 @@ import Menu from "@/components/menu/Menu.vue";
 
       <p class="mt-3">
         <span class="pi pi-clock"></span>&nbsp;
-        <small>Lieferung ab 14:00</small>
+        <small>Lieferung ab 16:00</small>
 
 <!--        <span class="d-none d-md-inline">-->
 <!--                   <span class=""> &#10038;</span>-->
@@ -39,7 +39,6 @@ import Menu from "@/components/menu/Menu.vue";
   justify-content: center;
   flex-direction: column;
   color: #fff;
-  //background-image: url("../../../public/img/271_italian_pizza_107.webp");
 }
 
 @media screen and (min-width: 800px) {

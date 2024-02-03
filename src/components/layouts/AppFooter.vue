@@ -1,7 +1,5 @@
 <script setup>
-import {useRouter} from "vue-router";
 
-const router = useRouter();
 </script>
 
 <template>
@@ -34,7 +32,7 @@ const router = useRouter();
 
     </div>
   </div>
-  <div class="text-center my-5" translate="no">&copy; 2023 Pizza-Wunderbar</div>
+  <div class="text-center my-5" translate="no">&copy; 2024 Pizza-Wunderbar</div>
 </footer>
 </div>
 </template>
