@@ -5,9 +5,9 @@ import {onBeforeRouteLeave} from "vue-router";
 import {useComponentStore} from "@/store/componentStore";
 
 const componentStore = useComponentStore();
-onBeforeRouteLeave(() => {
-  componentStore.setDefaults();
-})
+// onBeforeRouteLeave(() => {
+//   componentStore.setDefaults();
+// })
 </script>
 
 <template>

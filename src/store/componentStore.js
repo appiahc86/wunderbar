@@ -13,11 +13,11 @@ export const useComponentStore = defineStore('componentStore', {
             navigationDialog: false,
             addToCartDialog: false,
             descriptionDialog: false,
-            cartDialog: false,
             passwordResetDialog: false,
             userProfileDialog: false,
             ordersDialog: false,
             emailVerificationDialog: false,
+            smsDialog: false,
         }
     },
 
@@ -32,11 +32,11 @@ export const useComponentStore = defineStore('componentStore', {
             this.navigationDialog = false;
             this.addToCartDialog = false;
             this.descriptionDialog = false;
-            this.cartDialog = false;
             this.passwordResetDialog = false;
             this.userProfileDialog = false;
             this.ordersDialog = false;
             this.emailVerificationDialog = false;
+            this.smsDialog = false;
             }
     }
 })

@@ -88,7 +88,7 @@ const getStatus = (payload) => {
   switch (payload) {
     case "waiting": returnValue = "warten";
     break;
-    case "delivering": returnValue = "liefern";
+    case "delivering": returnValue = "warten";
     break;
     case "delivered": returnValue = "Geliefert";
     break;
@@ -216,7 +216,6 @@ const getStatus = (payload) => {
         <div class="row">
           <h5 class="mb-2 fw-bold">Lieferdetails</h5>
           <address class="fst-italic">
-           <span class="pi pi-map-marker"></span>
             <b>Straße: </b>{{ orderDetails[0].deliveryAddress.street }}<br>
             <b>Hausnummer: </b>{{ orderDetails[0].deliveryAddress.houseNumber }}<br>
             <b>Postleitzahl: </b>{{ orderDetails[0].deliveryAddress.postCode }} <br>

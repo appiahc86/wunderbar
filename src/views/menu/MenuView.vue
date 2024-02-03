@@ -8,6 +8,7 @@ const componentStore = useComponentStore();
 onBeforeRouteLeave(() => {
   componentStore.setDefaults();
 })
+
 </script>
 
 <template>

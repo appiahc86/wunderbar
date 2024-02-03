@@ -11,11 +11,15 @@ export const useCartStore = defineStore('cartStore', {
     state: () => {
         return {
             cart: [],
-            zipcodeId: null,
             deliveryFee: 0,
-            deliveryData: null
+            selectedPostCode: null,
+            deliveryData: {
+                note: "",
+                deliveryAddress: { street: '', houseNumber: '', postCode: '', town: '', floor: '', phone: '' }
+            } // ./delivery data
         }
-    },
+
+    }, // ./state
 
     getters: {
         getLength() { return this.cart.length },
@@ -98,16 +102,14 @@ export const useCartStore = defineStore('cartStore', {
 
         clearCart(){
             this.cart = [];
-            this.zipcodeId = null;
             this.deliveryFee = 0;
-            this.deliveryData = null;
         }
     },
 
     persist: {
         key: '_crt',
         storage: sessionStorage,
-        paths: ['cart', 'zipcodeId, deliveryFee', 'deliveryData'],
+        paths: ['cart', 'deliveryFee', 'deliveryData'],
         serializer: {
             deserialize: parse,
             serialize: stringify

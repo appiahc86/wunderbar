@@ -126,7 +126,7 @@ const addToCart = () => {
       </div>
 
       <div class="fw-bold my-4 text-center" v-else>
-        <mark>{{ menuItems[0].menu }}</mark>
+        <mark class="text-capitalize">{{ menuItems[0].menu }}</mark>
       </div>
 
 

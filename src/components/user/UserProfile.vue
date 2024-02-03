@@ -1,7 +1,8 @@
 <script setup>
 import Button from "primevue/button";
-import {onMounted, reactive, ref} from "vue";
+import {onMounted, reactive, ref, watch} from "vue";
 import axios from "@/axios";
+import vSelect from 'vue-select';
 import {useHomeStore} from "@/store/home";
 import {useComponentStore} from "@/store/componentStore";
 
@@ -9,6 +10,8 @@ const store = useHomeStore();
 const componentStore = useComponentStore();
 const loading = ref(false);
 const error = ref("");
+const zipcodes = ref([]);
+const selectedPostCode = ref(null);
 
 
 const formData = reactive({
@@ -24,6 +27,22 @@ const formData = reactive({
   }
 })
 
+
+//watch Selected Postcode
+watch(selectedPostCode, (value) => {
+  if (value) {
+    formData.deliveryAddress.postCode = value.zipCode;
+    formData.deliveryAddress.town = value.town;
+  }else {
+    formData.deliveryAddress.postCode = "";
+    formData.deliveryAddress.town = "";
+  }
+})
+
+const validatePhoneNumber = (e) => {
+  e.target.value = e.target.value.replace(/[^0-9]/g, '');
+  e.target.value = e.target.value.replace(/(\..*)\./g, '$1');
+}
 
 //onMounted Hook
 onMounted(() => {
@@ -77,6 +96,51 @@ const updateUser = async () => {
 
 }
 
+
+
+
+//Load all zipcodes
+(async () => {
+  try {
+
+    loading.value = true;
+    error.value = "";
+
+    const response = await axios.get(
+        '/zipcodes',
+
+        {
+          headers: {
+            'Authorization': `Bearer ${store.user.token}`
+          }
+        }
+    )
+
+    if (response.status === 200){
+      zipcodes.value = response.data.zipcodes;
+      //Find zipcode in store and update form input
+      if (store?.user?.deliveryAddress?.postCode){
+        for (const zipcode of zipcodes.value) {
+          if (zipcode.zipCode.toString() === store?.user?.deliveryAddress?.postCode) {
+            selectedPostCode.value = zipcode
+          }
+        }
+      }
+    }
+
+  }catch (e) {
+
+    if (e.response) return error.value = `${e.response.data}`;
+
+    if (e.request && e.request.status === 0)
+      return console.clear();
+
+    return console.clear();
+
+  }finally { loading.value = false }
+})()
+
+
 </script>
 
 <template>
@@ -127,24 +191,36 @@ const updateUser = async () => {
             </div>
           </div>
 
-          <!--PostCode-->
-          <div class="col-lg-6 mb-3">
-            <small class="fw-bold float-start">Postleitzahl
-              <span class="text-danger">*</span></small>
-            <div class="input-group">
-              <div class="input-group-text"><span class="pi pi-map-marker"></span></div>
-              <input type="text" placeholder="Postleitzahl eingeben"
-                     class="form-control shadow-none"  required
-                     v-model.trim="formData.deliveryAddress.postCode">
+            <!-- Zip Code-->
+            <div class="col-lg-6 mb-3">
+              <small class="fw-bold float-start">Postleitzahl
+                <span class="text-danger">*</span></small>
+              <div class="input-group">
+                <div class="input-group-text"><span class="pi pi-map-marker"></span></div>
+
+                <v-select :options="zipcodes" label="zipCode" style="padding: 0 !important;"
+                          placeholder="" class="form-control shadow-none" v-model="selectedPostCode">
+                  <template #no-options="">
+                    Keine Daten verfügbar
+                  </template>
+                  <template #search="{attributes, events}">
+                    <input
+                        class="vs__search"
+                        :required="!selectedPostCode"
+                        v-bind="attributes"
+                        v-on="events"
+                    />
+                  </template>
+                </v-select>
+              </div>
             </div>
-          </div>
 
           <!--City-->
           <div class="col-lg-6 mb-3">
             <small class="fw-bold float-start">Stadt</small>
             <div class="input-group">
               <div class="input-group-text"><span class="pi pi-map-marker"></span></div>
-              <input type="text" placeholder="Braunschweig" disabled
+              <input type="text" placeholder="" disabled
                      class="form-control shadow-none" v-model="formData.deliveryAddress.town">
             </div>
           </div>
@@ -165,9 +241,9 @@ const updateUser = async () => {
               <span class="text-danger">*</span></small>
             <div class="input-group">
               <div class="input-group-text">+49</div>
-              <input type="text" placeholder="Telefonnummer" required
-                     class="form-control shadow-none" v-model="formData.deliveryAddress.phone"
-                     @input="">
+              <input type="text"  placeholder="z.B. 1521123456788" required
+                     class="form-control shadow-none" v-model.number="formData.deliveryAddress.phone"
+                     @input="validatePhoneNumber" maxlength="15">
             </div>
           </div>
 

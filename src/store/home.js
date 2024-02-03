@@ -15,7 +15,9 @@ export const useHomeStore = defineStore('homeStore', {
             user: {},
             menu: [],
             menuLoading: false,
-            verificationEmail: ''
+            verificationEmail: '',
+            sms: '',
+            smsVerified: false
          }
     },
 
@@ -55,7 +57,7 @@ export const useHomeStore = defineStore('homeStore', {
     persist: {
        key: '_session',
             storage: sessionStorage,
-            paths: ['user'],
+            paths: ['user', 'smsVerified'],
             serializer: {
                 deserialize: parse,
                 serialize: stringify
