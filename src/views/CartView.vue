@@ -4,7 +4,7 @@ import {currency, formatNumber} from "@/functions";
 import {useHomeStore} from "@/store/home";
 import {useComponentStore} from "@/store/componentStore";
 import {useRouter} from "vue-router";
-import {ref, watch} from "vue";
+import {ref, watch, onMounted} from "vue";
 import vSelect from 'vue-select';
 import axios from "@/axios";
 import 'vue-select/dist/vue-select.css';
@@ -22,7 +22,6 @@ const error = ref("");
 const zipcodes = ref([]);
 
 
-
 if (!cartStore.cart.length){
   router.push({name: 'home'});
 }
@@ -33,6 +32,7 @@ watch(() => cartStore.deliveryData.deliveryAddress.phone, (value) => {
   if(typeof value !== "number"){
     cartStore.deliveryData.deliveryAddress.phone = "";
   }
+  store.smsVerified = false;
 
 })
 
@@ -117,6 +117,10 @@ const validate = async () => {
     error.value = "";
     cartStore.deliveryFee = 0;
 
+    if (!cartStore?.deliveryData?.deliveryAddress?.phone){
+      return error.value = "Bitte geben Sie die Telefonnummer ein"
+    }
+
 
     if (!cartStore.selectedPostCode?.zipCode){
       return error.value = "Es wurde keine Postleitzahl eingegeben"
@@ -128,17 +132,21 @@ const validate = async () => {
     }
 
 
-
     cartStore.deliveryFee = cartStore?.selectedPostCode?.deliveryFee;
     cartStore.deliveryData.deliveryAddress.town = cartStore?.selectedPostCode?.town;
 
 
-    await requestSMS();
+    if (store.smsVerified) {
+      router.push({name: 'checkout'});
+    }else {
+      await requestSMS();
+    }
+
 
   }catch (e) {
 
-     //return error.value = "Entschuldigung, etwas ist schief gelaufen. Bitte versuchen Sie es später noch einmal";
-error.value = e.message
+     return error.value = "Entschuldigung, etwas ist schief gelaufen. Bitte versuchen Sie es später noch einmal";
+// error.value = e.message
   }finally { loading.value = false }
 
 }
@@ -197,6 +205,11 @@ error.value = e.message
   }finally { loading.value = false }
 })()
 
+
+//On mounted hook
+onMounted(() => {
+  componentStore.setDefaults();
+})
 </script>
 
 <template>

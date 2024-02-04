@@ -4,13 +4,15 @@ import {ref} from "vue";
 import axios from "@/axios";
 import {useHomeStore} from "@/store/home";
 import CryptoJS from "crypto-js";
-import {useRouter} from "vue-router"
+import {onBeforeRouteLeave, useRouter} from "vue-router"
+import {useComponentStore} from "@/store/componentStore";
 
 const router = useRouter();
 const store = useHomeStore();
 const loading = ref(false);
 const error = ref("");
 const verificationCode = ref("");
+const componentStore = useComponentStore();
 
 
 //Resend SMS
@@ -53,6 +55,10 @@ const verify = async () => {
   }finally { loading.value = false; }
 
 }
+
+onBeforeRouteLeave(() => {
+  componentStore.setDefaults();
+})
 
 
 </script>

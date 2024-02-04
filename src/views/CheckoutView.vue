@@ -8,7 +8,6 @@ import axios from "@/axios";
 import {useComponentStore} from "@/store/componentStore";
 import {useRouter} from "vue-router";
 
-
 const componentStore = useComponentStore();
 const cartStore = useCartStore();
 const store = useHomeStore();
@@ -285,6 +284,7 @@ const initaiteStripeCcheckout = async () => {
     });
     paymentElement.mount('#payment-element');
 
+
     loading.value = false;
     ccActivated.value = true;
 
@@ -293,14 +293,6 @@ const initaiteStripeCcheckout = async () => {
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
 
-      paying.value = true;
-      //Send purchase order to backend
-      const err = await sendDataToServer('cc', response.data.paymentIntentId);
-
-      if (err){
-        paying.value = false;
-        return toast.add({severity:'error', detail: err, life: 6000});
-      }
 
       const { error, paymentIntent } = await stripe.confirmPayment({
         //`Elements` instance that was used to create the Payment Element
@@ -317,26 +309,41 @@ const initaiteStripeCcheckout = async () => {
         // This point will only be reached if there is an immediate error when
         // confirming the payment. Show error to your customer (for example, payment
         // details incomplete)
+
+        console.log(error.message)
+
         //Delete order from db
-        paying.value = true;
-         axios.post(`${axios.defaults.baseURL}/orders/destroy`,
-
-            JSON.stringify({
-              extReference: response.data.paymentIntentId,
-            }),
-            {
-              headers: {
-                "Authorization": store?.user?.token ? `Bearer ${store?.user?.token}` : ""
-              },
-            }
-        ).then(() => console.log('cleared'))
-             .catch(e => console.log('not cleared'))
-             .finally(() =>  paying.value = false)
-
-        toast.add({severity:'error', detail: error.message,
-          life: 6000});
+        // paying.value = true;
+        //  axios.post(`${axios.defaults.baseURL}/orders/destroy`,
+        //
+        //     JSON.stringify({
+        //       extReference: response.data.paymentIntentId,
+        //     }),
+        //     {
+        //       headers: {
+        //         "Authorization": store?.user?.token ? `Bearer ${store?.user?.token}` : ""
+        //       },
+        //     }
+        // ).then(() => console.log('cleared'))
+        //      .catch(e => console.log('not cleared'))
+        //      .finally(() =>  paying.value = false)
+        //
+        // toast.add({severity:'error', detail: error.message,
+        //   life: 6000});
 
       } else {
+
+
+
+        //Send purchase order to backend
+        paying.value = true;
+        const err = await sendDataToServer('cc', response.data.paymentIntentId);
+
+        if (err){
+          paying.value = false;
+          return toast.add({severity:'error', detail: err, life: 6000});
+        }
+
 
         paying.value = false;
         cartStore.clearCart();
