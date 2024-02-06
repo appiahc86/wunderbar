@@ -379,6 +379,17 @@ const initaiteStripeCcheckout = async () => {
           <!-- ...........    delivery address ...............   -->
           <div class="row">
 
+            <!-- Name-->
+            <div class="col-lg-6 mb-3">
+              <small class="fw-bold float-start">Name
+                <span class="text-danger">*</span></small>
+              <div class="input-group">
+                <div class="input-group-text"><span class="pi pi-map-marker"></span></div>
+                <input type="text" required disabled class="form-control shadow-none"
+                       :value="cartStore?.deliveryData?.deliveryAddress?.name">
+              </div>
+            </div>
+
             <!--Street Name-->
             <div class="col-lg-6 mb-3">
               <small class="fw-bold float-start">Straße

@@ -15,7 +15,7 @@ export const useCartStore = defineStore('cartStore', {
             selectedPostCode: null,
             deliveryData: {
                 note: "",
-                deliveryAddress: { street: '', houseNumber: '', postCode: '', town: '', floor: '', phone: '' }
+                deliveryAddress: { name: "", street: '', houseNumber: '', postCode: '', town: '', floor: '', phone: '' }
             } // ./delivery data
         }
 
