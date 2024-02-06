@@ -63,12 +63,13 @@ const decrement = (data) => {
 
 
 if (store?.user?.deliveryAddress?.phone){
-  cartStore.deliveryData.deliveryAddress.street = store.user.deliveryAddress.street;
-  cartStore.deliveryData.deliveryAddress.houseNumber = store.user.deliveryAddress.houseNumber;
+  cartStore.deliveryData.deliveryAddress.name = store?.user?.name;
+  cartStore.deliveryData.deliveryAddress.street = store?.user?.deliveryAddress?.street;
+  cartStore.deliveryData.deliveryAddress.houseNumber = store?.user?.deliveryAddress?.houseNumber;
   // formData.deliveryAddress.postCode = store.user.deliveryAddress.postCode; //TODO fix it
-  cartStore.deliveryData.deliveryAddress.floor = store.user.deliveryAddress.floor;
-  cartStore.deliveryData.deliveryAddress.town = store.user.deliveryAddress.town;
-  cartStore.deliveryData.deliveryAddress.phone = store.user.deliveryAddress.phone;
+  cartStore.deliveryData.deliveryAddress.floor = store?.user?.deliveryAddress?.floor;
+  cartStore.deliveryData.deliveryAddress.town = store?.user?.deliveryAddress?.town;
+  cartStore.deliveryData.deliveryAddress.phone = store?.user?.deliveryAddress?.phone;
 }
 
 
@@ -269,6 +270,18 @@ onMounted(() => {
 
         <!-- ...........    delivery address ...............   -->
         <div class="row">
+
+          <!-- Name-->
+          <div class="col-lg-6 mb-3">
+            <small class="fw-bold float-start">Name
+              <span class="text-danger">*</span></small>
+            <div class="input-group">
+              <div class="input-group-text"><span class="pi pi-map-marker"></span></div>
+              <input type="text" placeholder="Name" required
+                     class="form-control shadow-none"
+                     v-model.trim="cartStore.deliveryData.deliveryAddress.name">
+            </div>
+          </div>
 
           <!--Street Name-->
           <div class="col-lg-6 mb-3">
