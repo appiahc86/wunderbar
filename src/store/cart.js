@@ -46,6 +46,9 @@ export const useCartStore = defineStore('cartStore', {
         addToCart(payload){
 
             const { id, name, menu, menuId, qty } = payload;
+
+            if(!id) return;
+
             const selectedChoice = payload.selectedChoice ? payload.selectedChoice.name : '';
             const price = payload.selectedChoice ? parseFloat(payload.selectedChoice.price) : parseFloat(payload.price);
 

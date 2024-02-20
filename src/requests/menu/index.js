@@ -13,6 +13,7 @@ export const listMenu = async () => {
     } catch (e) {
         if (e.response) return {error: e.response.data};
         if (e.request && e.request.status === 0)
-            return {error: `Leider wurde die Verbindung zum Server abgelehnt. Bitte überprüfen Sie Ihre Internetverbindung oder versuchen Sie es später erneut`};
+            // return {error: `Leider wurde die Verbindung zum Server abgelehnt. Bitte überprüfen Sie Ihre Internetverbindung oder versuchen Sie es später erneut`};
+            return {error: null, menu: []};
     }
 }

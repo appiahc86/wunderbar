@@ -81,8 +81,11 @@ const processOrder = async () => {
 //********* Pay with paypal **********
 onMounted(async () => {
 
-  if (!cartStore.deliveryData.deliveryAddress.postCode && !store.smsVerified){
-    router.push({name: "home"});
+  if (!store.smsVerified === true) {
+    router.back();
+  }
+  if (!cartStore?.deliveryData?.deliveryAddress?.postCode) {
+    router.back();
   }
 
 
@@ -312,24 +315,6 @@ const initaiteStripeCcheckout = async () => {
 
         console.log(error.message)
 
-        //Delete order from db
-        // paying.value = true;
-        //  axios.post(`${axios.defaults.baseURL}/orders/destroy`,
-        //
-        //     JSON.stringify({
-        //       extReference: response.data.paymentIntentId,
-        //     }),
-        //     {
-        //       headers: {
-        //         "Authorization": store?.user?.token ? `Bearer ${store?.user?.token}` : ""
-        //       },
-        //     }
-        // ).then(() => console.log('cleared'))
-        //      .catch(e => console.log('not cleared'))
-        //      .finally(() =>  paying.value = false)
-        //
-        // toast.add({severity:'error', detail: error.message,
-        //   life: 6000});
 
       } else {
 

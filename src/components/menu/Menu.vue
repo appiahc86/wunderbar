@@ -34,6 +34,8 @@ const store = useHomeStore();
 
   </aside>
 
+
+<!-- For smaller screens -->
   <template v-if="store.menuLoading">
     <div class="d-inline d-lg-none px-2">
       <template v-for="men in 5" :key="men">
