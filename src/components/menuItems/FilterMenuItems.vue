@@ -13,7 +13,6 @@ import Menu from "@/components/menu/Menu.vue";
 import {useRoute} from "vue-router";
 
 const route = useRoute();
-const store = useHomeStore();
 const cartStore = useCartStore();
 const componentStore = useComponentStore();
 const page = ref(1);
@@ -60,7 +59,8 @@ const fetchMenuItems = async () => {
       route.params.id,
       page.value,
       pageSize.value);
-  if (data.error) return toast.add({severity:'warn', detail: `${data.error}`, life: 4000});
+  if (data.error) return console.log(data.error);
+  // if (data.error) return toast.add({severity:'warn', detail: `${data.error}`, life: 4000});
   menuItems.value = data.menuItems;
   path.value = data.path;
   totalRecords.value = data.totalRecords;
@@ -126,7 +126,7 @@ const addToCart = () => {
       </div>
 
       <div class="fw-bold my-4 text-center" v-else>
-        <mark class="text-capitalize">{{ menuItems[0].menu }}</mark>
+        <mark class="text-capitalize">{{ menuItems[0]?.menu || 'Kein Eintrag gefunden' }}</mark>
       </div>
 
 
@@ -221,7 +221,6 @@ const addToCart = () => {
               </div>
             </div>
           </template>
-
         </template>
 
 

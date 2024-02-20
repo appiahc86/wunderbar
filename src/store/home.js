@@ -57,7 +57,7 @@ export const useHomeStore = defineStore('homeStore', {
     persist: {
        key: '_session',
             storage: sessionStorage,
-            paths: ['user', 'smsVerified'],
+            paths: ['user'],
             serializer: {
                 deserialize: parse,
                 serialize: stringify

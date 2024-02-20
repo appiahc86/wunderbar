@@ -54,7 +54,7 @@ const addToCartTotal = computed(() => {
 const fetchMenuItems = async () => {
   loading.value = true;
   const data = await listMenuItems(page.value, pageSize.value);
-  if (data.error) return toast.add({severity:'warn', detail: `${data.error}`, life: 4000});
+  if (data.error) return console.log(data.error);
   menuItems.value = data.menuItems;
   path.value = data.path;
   totalRecords.value = data.totalRecords;
@@ -255,9 +255,11 @@ const addToCart = () => {
                     @click="addToCartData.qty++">
                   </div>
                   <br>
+
                   <Button :label="`addiere ${addToCartData.qty} für ${formatNumber(addToCartTotal)} ${currency}`"
                           type="button" class="p-button  p-button-rounded mt-2 px-4 py-2"
                     @click="addToCart"/>
+
                 </div>
 
               </div>

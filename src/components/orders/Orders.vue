@@ -222,7 +222,7 @@ const getStatus = (payload) => {
             <b>Postleitzahl: </b>{{ orderDetails[0].deliveryAddress.postCode }} <br>
             <b>Stadt: </b>{{ orderDetails[0].deliveryAddress.town }} <br>
             <b>Etage: </b>{{ orderDetails[0].deliveryAddress.floor }} <br>
-            <b>Telefonnummer: </b>{{ orderDetails[0].deliveryAddress.phone }} <br>
+            <b>Telefonnummer: </b>+49{{ orderDetails[0].deliveryAddress.phone }} <br>
             <b>Notiz: </b>{{ orderDetails[0].note }} <br>
 
           </address>

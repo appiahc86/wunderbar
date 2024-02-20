@@ -81,7 +81,7 @@ onBeforeRouteLeave(() => {
 
       <div class="text-center my-4">
         <div class="text-danger mb-1" v-if="error"><small>{{ error }}</small></div>
-        <Button label="Einreichen" type="submit" :loading="loading" :disabled="loading"
+        <Button label="Einreichen" type="submit" :loading="loading"
                 class="p-button  p-button-rounded px-4 py-2"
                 icon="pi pi-send"/>
       </div>

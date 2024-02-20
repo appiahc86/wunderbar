@@ -253,7 +253,7 @@ onMounted(() => {
 
             <tr>
               <th>Zwischensumme</th> <!-- SubTotal -->
-              <td class="float-end fw-bold">{{ formatNumber(cartStore.total) }} {{ currency }}</td>
+              <td class="float-end fw-bold">{{ formatNumber(cartStore.subTotal) }} {{ currency }}</td>
             </tr>
 
           </table>
